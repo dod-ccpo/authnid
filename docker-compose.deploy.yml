@@ -89,7 +89,7 @@ services:
   backend:
     deploy:
       labels:
-        - traefik.frontend.rule=PathPrefix:/api
+        - traefik.frontend.rule=PathPrefix:/
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=${TRAEFIK_TAG}

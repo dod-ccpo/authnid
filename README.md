@@ -34,11 +34,11 @@ $RUN
 
 * Your OS will handle redirecting `dev.cac.atat.codes` to your local stack. So, in your browser, go to: http://dev.cac.atat.codes.
 
-Add and modify SQLAlchemy models to `./backend/app/app/models/`, Marshmallow schemas to `./backend/app/app/schemas` and API endpoints to `./backend/app/app/api/`.
+Add and modify SQLAlchemy models to `./app/app/models/`, Marshmallow schemas to `./app/app/schemas` and API endpoints to `./app/app/api/`.
 
-Add and modify tasks to the Celery worker in `./backend/app/app/worker.py`.
+Add and modify tasks to the Celery worker in `./app/app/worker.py`.
 
-If you need to install any additional package to the worker, add it to the file `./backend/app/Dockerfile-celery-worker`.
+If you need to install any additional package to the worker, add it to the file `./app/Dockerfile-celery-worker`.
 
 The `docker-compose.override.yml` file for local development has a host volume with your app files inside the container for rapid iteration. So you can update your code and it will be the same code (updated) inside the container. You just have to restart the server, but you don't need to rebuild the image to test a change. Make sure you use this only for local development. Your final production images should be built with the latest version of your code and do not depend on host volumes mounted.
 
@@ -63,9 +63,9 @@ docker-compose -f docker-stack.yml exec -T backend-tests pytest
 docker-compose -f docker-stack.yml down -v --remove-orphans
 ```
 
-The tests run with Pytest, modify and add tests to `./backend/app/app/tests/`.
+The tests run with Pytest, modify and add tests to `./app/app/tests/`.
 
-If you need to install any additional package for the REST tests, add it to the file `./backend/app/Dockerfile-tests`.
+If you need to install any additional package for the REST tests, add it to the file `./app/Dockerfile-tests`.
 
 If you use GitLab CI the tests will run automatically.
 
@@ -96,7 +96,7 @@ alembic revision --autogenerate -m "Add column last_name to User model"
 alembic upgrade head
 ```
 
-If you don't want to use migrations at all, uncomment the line in the file at `./backend/app/app/core/database.py` with:
+If you don't want to use migrations at all, uncomment the line in the file at `./app/app/core/database.py` with:
 
 ```python
 Base.metadata.create_all(bind=engine)
