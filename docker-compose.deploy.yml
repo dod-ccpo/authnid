@@ -93,13 +93,6 @@ services:
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=${TRAEFIK_TAG}
-  frontend:
-    deploy:
-      labels:
-        - traefik.frontend.rule=PathPrefix:/
-        - traefik.enable=true
-        - traefik.port=80
-        - traefik.tags=${TRAEFIK_TAG}
 
 volumes:
   app-db-data:

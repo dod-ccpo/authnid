@@ -27,4 +27,3 @@ services:
       - POSTGRES_PASSWORD=NXUJHjedjb7CXx[M
       - FIRST_SUPERUSER=admin@cac.atat.codes
       - FIRST_SUPERUSER_PASSWORD=cac
-  frontend:

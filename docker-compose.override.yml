@@ -110,14 +110,6 @@ services:
       - ~/.jupyter:/root/.jupyter
     ports:
       - '8888:8888'
-  frontend:
-    build:
-      context: ./frontend
-      args:
-          env: dev
-    labels:
-      - traefik.frontend.rule=PathPrefix:/
-      - traefik.enable=true
-      - traefik.port=80
+
 volumes:
   app-db-data:

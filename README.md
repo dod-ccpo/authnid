@@ -36,7 +36,7 @@ $RUN
 
 Add and modify SQLAlchemy models to `./backend/app/app/models/`, Marshmallow schemas to `./backend/app/app/schemas` and API endpoints to `./backend/app/app/api/`.
 
-Add and modify tasks to the Celery worker in `./backend/app/app/worker.py`. 
+Add and modify tasks to the Celery worker in `./backend/app/app/worker.py`.
 
 If you need to install any additional package to the worker, add it to the file `./backend/app/Dockerfile-celery-worker`.
 
@@ -101,18 +101,6 @@ If you don't want to use migrations at all, uncomment the line in the file at `.
 ```python
 Base.metadata.create_all(bind=engine)
 ```
-
-## Front end development
-
-* Enter the `frontend` directory, install the NPM packages and start it the `npm` scrits:
-
-```bash
-cd frontend
-npm install
-npm run start
-```
-
-Check the file `package.json` to see other available options.
 
 ## Deployment
 
@@ -329,7 +317,7 @@ Swagger UI: https://staging.cac.atat.codes/swagger/
 PGAdmin: https://pgadmin.staging.cac.atat.codes
 
 Flower: https://flower.staging.cac.atat.codes
-    
+
 ### Development
 
 Development URLs, for local development. Given that you modified your `hosts` file.
@@ -366,8 +354,8 @@ Traefik UI: http://dev.cac.atat.codes:8080
 * `traefik_public_network`: traefik-public
 * `traefik_public_constraint_tag`: traefik-public
 * `flower_auth`: root:changethis
-* `sentry_dsn`: 
-* `docker_image_prefix`: 
+* `sentry_dsn`:
+* `docker_image_prefix`:
 * `docker_image_backend`: backend
 * `docker_image_celeryworker`: celeryworker
 * `docker_image_frontend`: frontend

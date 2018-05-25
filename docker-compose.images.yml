@@ -4,5 +4,3 @@ services:
     image: 'backend:${TAG-latest}'
   celeryworker:
     image: 'celeryworker:${TAG-latest}'
-  frontend:
-    image: 'frontend:${TAG-latest}'
