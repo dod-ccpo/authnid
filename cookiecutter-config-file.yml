@@ -1,0 +1,28 @@
+default_context:
+  project_name: 'authnid'
+  project_slug: 'authnid'
+  domain_main: 'cac.atat.codes'
+  domain_staging: 'staging.cac.atat.codes'
+  domain_dev: 'dev.cac.atat.codes'
+  docker_swarm_stack_name_main: 'cac-atat-codes'
+  docker_swarm_stack_name_staging: 'staging-cac-atat-codes'
+  secret_key: '1faa14e769f5722ab658fe53120301e0623327aff4824471ee13b1aa93e74650'
+  first_superuser: 'admin@cac.atat.codes'
+  first_superuser_password: 'cac'
+  postgres_password: 'NXUJHjedjb7CXx[M'
+  pgadmin_default_user: 'admin@cac.atat.codes'
+  pgadmin_default_user_password: 'NXUJHjedjb7CXx[M'
+  traefik_constraint_tag: 'cac.atat.codes'
+  traefik_constraint_tag_staging: 'staging.cac.atat.codes'
+  traefik_public_network: 'traefik-public'
+  traefik_public_constraint_tag: 'traefik-public'
+  flower_auth: 'root:changethis'
+  sentry_dsn: ''
+  docker_image_prefix: ''
+  docker_image_backend: 'backend'
+  docker_image_celeryworker: 'celeryworker'
+  docker_image_frontend: 'frontend'
+  _copy_without_render:
+    - frontend/src/**/*.html
+    - frontend/node_modules/*
+  _template: ./
