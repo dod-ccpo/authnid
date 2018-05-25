@@ -20,10 +20,11 @@ services:
       - traefik.port=8080
       - traefik.tags=${TRAEFIK_TAG}
     environment:
-      - API_URL=http://${DOMAIN}/api/v1/swagger/
+      - API_URL=https://${DOMAIN}/api/v1/swagger/
   proxy:
     image: traefik:v1.5
     volumes:
+      - ./traefik.toml:/traefik.toml
       - /var/run/docker.sock:/var/run/docker.sock
     command: --docker \
       --docker.watch \
@@ -35,11 +36,11 @@ services:
     labels:
       - traefik.frontend.rule=Host:${DOMAIN}
       - traefik.enable=true
-      - traefik.port=80
-
+      - traefik.port=443
     ports:
       - '80:80'
       - '8080:8080'
+      - '443:443'
   flower:
     image: totem/celery-flower-docker
     environment:
