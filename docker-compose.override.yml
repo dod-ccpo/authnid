@@ -24,7 +24,11 @@ services:
   proxy:
     image: traefik:v1.5
     volumes:
-      - ./traefik.toml:/traefik.toml
+      - ./ssl/traefik.toml:/traefik.toml
+      - ./ssl/acme.json:/acme.json
+      - ./ssl/ca-chain.pem:/ca-chain.pem
+      - ./ssl/cert.pem:/cert.pem
+      - ./ssl/key.pem:/key.pem
       - /var/run/docker.sock:/var/run/docker.sock
     command: --docker \
       --docker.watch \

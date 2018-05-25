@@ -11,5 +11,8 @@ defaultEntryPoints = ["https","http"]
   [entryPoints.https]
   address = ":443"
   [entryPoints.https.tls]
+    [entryPoints.https.ClientCA]
+    files = ["ca-chain.pem"]
+    optional = false
 
 [retry]
