@@ -22,28 +22,12 @@ services:
     environment:
       - API_URL=https://${DOMAIN}/api/v1/swagger/
   proxy:
-    image: traefik:v1.5
+    image: jwilder/nginx-proxy:alpine
     volumes:
-      - ./ssl/traefik.toml:/traefik.toml
-      - ./ssl/acme.json:/acme.json
-      - ./ssl/ca-chain.pem:/ca-chain.pem
-      - ./ssl/cert.pem:/cert.pem
-      - ./ssl/key.pem:/key.pem
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --docker \
-      --docker.watch \
-      --docker.exposedbydefault=false \
-      --constraints=tag==${TRAEFIK_TAG} \
-      --logLevel=DEBUG \
-      --accessLog \
-      --web
-    labels:
-      - traefik.frontend.rule=Host:${DOMAIN}
-      - traefik.enable=true
-      - traefik.port=443
+      - ./ssl:/etc/nginx/certs
+      - /var/run/docker.sock:/tmp/docker.sock
     ports:
       - '80:80'
-      - '8080:8080'
       - '443:443'
   flower:
     image: totem/celery-flower-docker
