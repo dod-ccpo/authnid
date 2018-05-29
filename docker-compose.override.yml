@@ -21,6 +21,8 @@ services:
       - traefik.tags=${TRAEFIK_TAG}
     environment:
       - API_URL=https://${DOMAIN}/api/v1/swagger/
+    ports:
+      - '8080:8080'
   proxy:
     image: jwilder/nginx-proxy:alpine
     volumes:

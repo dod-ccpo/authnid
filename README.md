@@ -326,13 +326,11 @@ Front end: http://dev.cac.atat.codes
 
 Back end: http://dev.cac.atat.codes/api/
 
-Swagger UI: http://dev.cac.atat.codes/swagger/
+Swagger UI: http://dev.cac.atat.codes:8080
 
 PGAdmin: http://dev.cac.atat.codes:5050
 
 Flower: http://dev.cac.atat.codes:5555
-
-Traefik UI: http://dev.cac.atat.codes:8080
 
 ## Project Cookiecutter variables used during generation
 
