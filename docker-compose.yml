@@ -11,6 +11,7 @@ services:
       - db
     ports:
       - "80:80"
+      - "443:443"
     environment:
       - VIRTUAL_HOST=${DOMAIN}
       - SECRET_KEY=1faa14e769f5722ab658fe53120301e0623327aff4824471ee13b1aa93e74650
