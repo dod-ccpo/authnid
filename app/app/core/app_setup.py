@@ -6,8 +6,6 @@ from raven.contrib.flask import Sentry
 from app.main import app
 from .database import db_session, init_db
 from . import config
-# Set up CORS
-from . import cors  # noqa
 
 from .jwt import jwt  # noqa
 from . import errors
