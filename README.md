@@ -50,17 +50,13 @@ There is an `.env` file that has some Docker Compose default values that allow y
 To test the back end run:
 
 ```bash
-# Generate the testing docker-stack.yml file with all the needed configurations
-DOMAIN=backend docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.test.yml config > docker-stack.yml
-# Build the testing stack
-docker-compose -f docker-stack.yml build
-# Start the testing stack
-docker-compose -f docker-stack.yml up -d
+# Start and build the testing stack
+docker-compose up -d --build
 sleep 20; # Give some time for the DB and prestart script to finish
 # Run the REST tests
-docker-compose -f docker-stack.yml exec -T backend-tests pytest
+docker-compose exec -T backend-tests pytest
 # Stop and eliminate the testing stack
-docker-compose -f docker-stack.yml down -v --remove-orphans
+docker-compose down -v --remove-orphans
 ```
 
 The tests run with Pytest, modify and add tests to `./app/app/tests/`.

@@ -9,11 +9,3 @@ services:
       - DEFAULT_PASSWORD=NXUJHjedjb7CXx[M
   swagger-ui:
     image: swaggerapi/swagger-ui
-  proxy:
-    image: traefik:v1.5
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-  flower:
-    image: totem/celery-flower-docker
-    environment:
-      - FLOWER_BASIC_AUTH=root:changethis

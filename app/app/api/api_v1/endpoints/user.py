@@ -15,7 +15,6 @@ from app.api.api_v1.api_docs import docs, security_params
 from app.core import config
 from app.core.security import pwd_context
 from app.core.database import db_session
-from app.core.celery_app import celery_app
 
 # Import Schemas
 from app.schemas.user import UserSchema

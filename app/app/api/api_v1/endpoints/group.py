@@ -14,7 +14,6 @@ from app.main import app
 from app.api.api_v1.api_docs import docs, security_params
 from app.core import config
 from app.core.database import db_session
-from app.core.celery_app import celery_app
 # Import Schemas
 from app.schemas.group import GroupSchema
 from app.schemas.msg import MsgSchema

@@ -2,7 +2,3 @@ version: '3'
 services:
   backend:
     build: .
-  celeryworker:
-    build:
-      context: .
-      dockerfile: Dockerfile-celery-worker

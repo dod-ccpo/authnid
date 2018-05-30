@@ -14,74 +14,27 @@ services:
       - '5050:5050'
   swagger-ui:
     image: swaggerapi/swagger-ui
-    labels:
-      - traefik.frontend.rule=PathPrefixStrip:/swagger/
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.tags=${TRAEFIK_TAG}
     environment:
       - API_URL=https://${DOMAIN}/api/v1/swagger/
     ports:
       - '8080:8080'
-  proxy:
-    image: jwilder/nginx-proxy:alpine
-    volumes:
-      - ./ssl:/etc/nginx/certs
-      - ./ssl/client_certs.conf:/etc/nginx/conf.d/client_certs.conf
-      - /var/run/docker.sock:/tmp/docker.sock
-    ports:
-      - '80:80'
-      - '443:443'
-  flower:
-    image: totem/celery-flower-docker
-    environment:
-      - FLOWER_BASIC_AUTH=root:changethis
-    ports:
-      - '5555:5555'
   backend:
     build:
       context: ./
       args:
         env: dev
-    labels:
-      - traefik.frontend.rule=PathPrefix:/
-      - traefik.enable=true
-      - traefik.port=80
-      - traefik.tags=${TRAEFIK_TAG}
     networks:
       default:
         aliases:
           - ${DOMAIN}
     volumes:
       - './app:/app'
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - '~/.jupyter:/root/.jupyter'
     environment:
       - FLASK_APP=app/main.py
       - FLASK_DEBUG=1
       - 'RUN=flask run --host=0.0.0.0 --port=80'
-      - 'JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root'
     # command: bash -c "while true; do sleep 1; done"
     # command: bash -c "flask run --host=0.0.0.0 --port=80"
-  celeryworker:
-    build:
-      context: .
-      dockerfile: Dockerfile-celery-worker
-      args:
-        env: dev
-    environment:
-      - RUN=celery worker -A app.worker -l info -Q main-queue -c 1
-      - JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root
-    volumes:
-      - ./app:/app
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - ~/.jupyter:/root/.jupyter
   backend-tests:
     build:
       context: .
@@ -89,7 +42,6 @@ services:
       args:
         env: dev
     environment:
-      - JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root
       - SERVER_NAME=backend
       - FIRST_SUPERUSER=admin@cac.atat.codes
       - FIRST_SUPERUSER_PASSWORD=cac
@@ -97,11 +49,6 @@ services:
     command: bash -c "while true; do sleep 1; done"
     volumes:
       - ./app:/app
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - ~/.jupyter:/root/.jupyter
     ports:
       - '8888:8888'
 
