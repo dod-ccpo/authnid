@@ -27,7 +27,7 @@ def log_in_user():
         identity=user.id, expires_delta=access_token_expires)
     redirect_url = 'https://dev.www.atat.codes/log-in'
 
-    if request.headers.get('X-Client-Verify') == 'SUCCESS':
+    if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS':
         response = app.make_response(redirect(redirect_url))
     else:
         template = render_template('not_authorized.html', atst_url=redirect_url)
