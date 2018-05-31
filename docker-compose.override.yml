@@ -45,10 +45,13 @@ services:
       - SERVER_NAME=backend
       - FIRST_SUPERUSER=admin@cac.atat.codes
       - FIRST_SUPERUSER_PASSWORD=cac
+      # this sets the CA for the test requests
+      - REQUESTS_CA_BUNDLE=/etc/ssl/ca.crt
       # - SEED=0
     command: bash -c "while true; do sleep 1; done"
     volumes:
       - ./app:/app
+      - ./ssl:/etc/ssl
     ports:
       - '8888:8888'
 

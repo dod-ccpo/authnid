@@ -6,7 +6,7 @@ from app.core import config
 
 @pytest.fixture(scope='module')
 def server_api():
-    server_name = f'http://{config.SERVER_NAME}'
+    server_name = f'https://{config.SERVER_NAME}'
     return server_name
 
 
