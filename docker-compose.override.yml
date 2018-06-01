@@ -1,23 +1,5 @@
 version: '3'
 services:
-  db:
-    volumes:
-      - app-db-data:/var/lib/postgresql/data/pgdata
-  pgadmin:
-    image: fenglc/pgadmin4
-    depends_on:
-      - db
-    environment:
-      - DEFAULT_USER=admin@cac.atat.codes
-      - DEFAULT_PASSWORD=NXUJHjedjb7CXx[M
-    ports:
-      - '5050:5050'
-  swagger-ui:
-    image: swaggerapi/swagger-ui
-    environment:
-      - API_URL=https://${DOMAIN}/api/v1/swagger/
-    ports:
-      - '8080:8080'
   backend:
     build:
       context: ./
@@ -28,7 +10,7 @@ services:
         aliases:
           - ${DOMAIN}
     volumes:
-      - './app:/app'
+      - './:/app'
     environment:
       - FLASK_APP=app/main.py
       - FLASK_DEBUG=1
@@ -43,17 +25,12 @@ services:
         env: dev
     environment:
       - SERVER_NAME=backend
-      - FIRST_SUPERUSER=admin@cac.atat.codes
-      - FIRST_SUPERUSER_PASSWORD=cac
       # this sets the CA for the test requests
-      - REQUESTS_CA_BUNDLE=/etc/ssl/ca.crt
+      - REQUESTS_CA_BUNDLE=/app/ssl/ca.crt
       # - SEED=0
     command: bash -c "while true; do sleep 1; done"
     volumes:
-      - ./app:/app
+      - ./:/app
       - ./ssl:/etc/ssl
     ports:
       - '8888:8888'
-
-volumes:
-  app-db-data:
