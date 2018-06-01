@@ -26,7 +26,7 @@ services:
     environment:
       - SERVER_NAME=backend
       # this sets the CA for the test requests
-      - REQUESTS_CA_BUNDLE=/app/ssl/ca.crt
+      - REQUESTS_CA_BUNDLE=/app/ssl/certificate-authority/ca.crt
       # - SEED=0
     command: bash -c "while true; do sleep 1; done"
     volumes:

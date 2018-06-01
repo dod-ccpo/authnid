@@ -1,4 +1,0 @@
-[
-  "test/test_main.py::test_log_in_with_cac",
-  "test/test_main.py::test_log_in_fails_without_cac"
-]

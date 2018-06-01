@@ -6,7 +6,7 @@ RUN pip install pipenv
 ARG env=prod
 
 COPY ssl/*.conf /etc/nginx/conf.d/
-COPY ssl/ /etc/ssl/
+COPY ssl/server-certs/ /etc/ssl/
 COPY ./ /app
 
 WORKDIR /app/
