@@ -36,4 +36,13 @@ docker-compose exec -T backend-tests pytest
 docker-compose down -v --remove-orphans
 ```
 
+**NOTE:** For the tests to run, they need to know the location of:
+
+- the server's certificate authority (`ssl/certificate-authority/ca.crt`), set in the testing docker container with teh `REQUESTS_CA_BUNDLE` env variable
+- the client public cert and private key, both in `ssl/client-certs/`
+
 The tests run with Pytest, modify and add tests to `./tests/`.
+
+### SSL Certificates
+
+The `ssl` directory contains example certs for configuring the regular server SSL, client authentication, and the client certificates currently written to the sample PIVKey. It also contains a script, `make-certs.sh`, which can be used to write a new certificate authority and sign a CSR for the server SSL. The script writes the CSR to list multiple valid hosts (`subjectAltName`) so that the final cert can work across environments (like docker, for instance, where it's host name is "backend").
