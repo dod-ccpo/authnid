@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# script/down: Stop and remove all application containers
+
+set -e
+cd "$(dirname "$0")/.."
+
+docker-compose down -v --rmi local

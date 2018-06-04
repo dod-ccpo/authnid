@@ -1,100 +1,22 @@
 version: '3'
 services:
-  db:
-    volumes:
-      - app-db-data:/var/lib/postgresql/data/pgdata
-  pgadmin:
-    image: fenglc/pgadmin4
-    depends_on:
-      - db
-    environment:
-      - DEFAULT_USER=admin@cac.atat.codes
-      - DEFAULT_PASSWORD=NXUJHjedjb7CXx[M
-    ports:
-      - '5050:5050'
-  swagger-ui:
-    image: swaggerapi/swagger-ui
-    labels:
-      - traefik.frontend.rule=PathPrefixStrip:/swagger/
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.tags=${TRAEFIK_TAG}
-    environment:
-      - API_URL=https://${DOMAIN}/api/v1/swagger/
-  proxy:
-    image: traefik:v1.5
-    volumes:
-      - ./ssl/traefik.toml:/traefik.toml
-      - ./ssl/acme.json:/acme.json
-      - ./ssl/ca-chain.pem:/ca-chain.pem
-      - ./ssl/cert.pem:/cert.pem
-      - ./ssl/key.pem:/key.pem
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --docker \
-      --docker.watch \
-      --docker.exposedbydefault=false \
-      --constraints=tag==${TRAEFIK_TAG} \
-      --logLevel=DEBUG \
-      --accessLog \
-      --web
-    labels:
-      - traefik.frontend.rule=Host:${DOMAIN}
-      - traefik.enable=true
-      - traefik.port=443
-    ports:
-      - '80:80'
-      - '8080:8080'
-      - '443:443'
-  flower:
-    image: totem/celery-flower-docker
-    environment:
-      - FLOWER_BASIC_AUTH=root:changethis
-    ports:
-      - '5555:5555'
   backend:
     build:
-      context: .
+      context: ./
       args:
         env: dev
-    labels:
-      - traefik.frontend.rule=PathPrefix:/
-      - traefik.enable=true
-      - traefik.port=80
-      - traefik.tags=${TRAEFIK_TAG}
     networks:
       default:
         aliases:
           - ${DOMAIN}
     volumes:
-      - './app:/app'
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - '~/.jupyter:/root/.jupyter'
+      - './:/app'
     environment:
       - FLASK_APP=app/main.py
       - FLASK_DEBUG=1
       - 'RUN=flask run --host=0.0.0.0 --port=80'
-      - 'JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root'
     # command: bash -c "while true; do sleep 1; done"
-    command: bash -c "flask run --host=0.0.0.0 --port=80"
-  celeryworker:
-    build:
-      context: .
-      dockerfile: Dockerfile-celery-worker
-      args:
-        env: dev
-    environment:
-      - RUN=celery worker -A app.worker -l info -Q main-queue -c 1
-      - JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root
-    volumes:
-      - ./app:/app
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - ~/.jupyter:/root/.jupyter
+    # command: bash -c "flask run --host=0.0.0.0 --port=80"
   backend-tests:
     build:
       context: .
@@ -102,19 +24,13 @@ services:
       args:
         env: dev
     environment:
-      - JUPYTER=jupyter notebook --ip=0.0.0.0 --allow-root
-      - SERVER_NAME=${DOMAIN}
+      - SERVER_NAME=backend
+      # this sets the CA for the test requests
+      - REQUESTS_CA_BUNDLE=/app/ssl/certificate-authority/ca.crt
       # - SEED=0
     command: bash -c "while true; do sleep 1; done"
     volumes:
-      - ./app:/app
-      # For Hydrogen Jupyter easy integration with
-      # docker-compose exec server
-      # and
-      # jupyter notebook --ip=0.0.0.0 --allow-root
-      - ~/.jupyter:/root/.jupyter
+      - ./:/app
+      - ./ssl:/etc/ssl
     ports:
       - '8888:8888'
-
-volumes:
-  app-db-data:

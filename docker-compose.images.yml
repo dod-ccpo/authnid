@@ -1,6 +1,0 @@
-version: '3'
-services:
-  backend:
-    image: 'backend:${TAG-latest}'
-  celeryworker:
-    image: 'celeryworker:${TAG-latest}'
