@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# script/up: Start application containers
+
+set -e
+cd "$(dirname "$0")/.."
+
+docker-compose up -d
