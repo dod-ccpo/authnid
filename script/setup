@@ -6,5 +6,15 @@
 set -e
 cd "$(dirname "$0")/.."
 
+mkdir -p crl
+
+if [ ! -e ALLCRLZIP.zip ]; then
+  wget http://e80941f84921e909ab16-e354358e56dcbb7455ea93938bd936fa.r78.cf5.rackcdn.com/ALLCRLZIP.zip
+  unzip -o ALLCRLZIP.zip -d crl/
+fi
+
+cp ssl/client-certs/client-ca.der.crl crl/
+
 script/down
 script/bootstrap
+
