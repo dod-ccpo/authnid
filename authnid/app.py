@@ -2,11 +2,9 @@
 
 # Import installed packages
 from flask import Flask, request, redirect, render_template
+from .make_app import configured_app
 
-from .config import apply_config
-
-app = Flask(__name__)
-apply_config(app.config)
+app = configured_app()
 
 @app.route('/')
 def log_in_user():
