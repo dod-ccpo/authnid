@@ -6,7 +6,7 @@ config_defaults = {
     'PORT': 4567,
     'DEBUG': True,
     'TESTING': False,
-    'ATST_REDIRECT': 'https://dev.www.atat.codes/log-in'
+    'ATST_REDIRECT': 'https://www.atat.codes/home'
 }
 
 def make_app(config):
