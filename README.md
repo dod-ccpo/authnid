@@ -1,5 +1,7 @@
 # authnid
 
+[![Build Status](https://travis-ci.org/dod-ccpo/authnid.svg?branch=master)](https://travis-ci.org/dod-ccpo/authnid)
+
 ## Back end local development
 
 * Update your local `hosts` file, set the IP `127.0.0.1` (your `localhost`) to `dev.cac.atat.codes`. The `docker-compose.override.yml` file will set the environment variable `SERVER_NAME` to that host. Otherwise you would receive 404 errors.
