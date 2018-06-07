@@ -14,6 +14,7 @@ def log_in_user():
 
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
         response = app.make_response(redirect(redirect_url))
+        set_bearer_token(response)
     else:
         template = render_template('not_authorized.html', atst_url=redirect_url)
         response = app.make_response(template)
@@ -27,3 +28,8 @@ def is_valid_certificate(request):
         return app.crl_validator.validate(cert.encode())
     else:
         return False
+
+def set_bearer_token(response):
+    access_token = app.jwt_manager.token()
+    response.set_cookie('bearer-token', value=access_token,
+            domain='.atat.codes', secure=True)
