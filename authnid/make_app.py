@@ -3,7 +3,7 @@ import pathlib
 from flask import Flask
 from configparser import ConfigParser
 from .crl import Validator
-from .jwt import JWTManager
+from .token import TokenManager
 from .api.v1.routes import make_api as make_api_v1
 
 config_defaults = {
@@ -13,14 +13,14 @@ config_defaults = {
     'ATST_REDIRECT': 'https://www.atat.codes/home',
     'CRL_DIRECTORY': 'crl',
     'CA_CHAIN': 'ssl/server-certs/ca-chain.pem',
-    'JWT_SECRET': 'abc-123'
+    'TOKEN_SECRET': 'abc-123'
 }
 
 def make_app(config):
     app = Flask(__name__)
     app.config.update(config_defaults)
     app.config.update(config)
-    _make_jwt_manager(app)
+    _make_token_manager(app)
     _make_crl_validator(app)
     _apply_apis(app)
 
@@ -55,5 +55,5 @@ def _make_crl_validator(app):
         crl_locations.append(filename.absolute())
     app.crl_validator = Validator(roots=[app.config['CA_CHAIN']], crl_locations=crl_locations)
 
-def _make_jwt_manager(app):
-    app.jwt_manager = JWTManager(app.config.get('JWT_SECRET'))
+def _make_token_manager(app):
+    app.token_manager = TokenManager(app.config.get('TOKEN_SECRET'))

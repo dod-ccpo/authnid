@@ -1,6 +1,6 @@
 import jwt
 
-class JWTManager():
+class TokenManager():
     def __init__(self, secret):
         self._secret = secret
 

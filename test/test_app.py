@@ -1,7 +1,7 @@
 # Import installed packages
 import requests
 import re
-from test.helpers import is_jwt
+from test.helpers import is_token
 
 
 def test_log_in_with_cac(request_client):
@@ -32,4 +32,4 @@ def test_log_in_with_cac_sets_token(request_client):
     # https://github.com/requests/requests/issues/4414
     set_cookie = r.headers.get('Set-Cookie')
     token = re.match('bearer-token=([^;]+)', set_cookie)[1]
-    assert is_jwt(token)
+    assert is_token(token)

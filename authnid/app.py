@@ -30,6 +30,6 @@ def is_valid_certificate(request):
         return False
 
 def set_bearer_token(response):
-    access_token = app.jwt_manager.token()
+    access_token = app.token_manager.token()
     response.set_cookie('bearer-token', value=access_token,
             domain='.atat.codes', secure=True)
