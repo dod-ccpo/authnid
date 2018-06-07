@@ -6,7 +6,10 @@ from flask import Flask, request, redirect, render_template
 from .make_app import configured_app
 from .crl import Validator
 
+from .api.v1.routes import api as api_v1
+
 app = configured_app()
+app.register_blueprint(api_v1, url_prefix='/v1')
 
 crl_locations = []
 for filename in pathlib.Path(app.config['CRL_DIRECTORY']).glob('*'):
