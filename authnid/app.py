@@ -1,21 +1,10 @@
 # -*- coding: utf-8 -*-
 
 # Import installed packages
-import pathlib
 from flask import Flask, request, redirect, render_template
 from .make_app import configured_app
-from .crl import Validator
-
-from .api.v1.routes import api as api_v1
 
 app = configured_app()
-app.register_blueprint(api_v1, url_prefix='/v1')
-
-crl_locations = []
-for filename in pathlib.Path(app.config['CRL_DIRECTORY']).glob('*'):
-    crl_locations.append(filename.absolute())
-
-validator = Validator(roots=[app.config['CA_CHAIN']], crl_locations=crl_locations)
 
 @app.route('/')
 def log_in_user():
@@ -35,6 +24,6 @@ def log_in_user():
 def is_valid_certificate(request):
     cert = request.environ.get('HTTP_X_SSL_CLIENT_CERT')
     if cert:
-        return validator.validate(cert.encode())
+        return app.crl_validator.validate(cert.encode())
     else:
         return False

@@ -1,4 +1,3 @@
-# tk
 from flask import Blueprint
 
 def new_api(name, import_name):

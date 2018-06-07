@@ -1,6 +1,9 @@
 import os
+import pathlib
 from flask import Flask
 from configparser import ConfigParser
+from .crl import Validator
+from .api.v1.routes import make_api as make_api_v1
 
 config_defaults = {
     'PORT': 4567,
@@ -8,13 +11,15 @@ config_defaults = {
     'TESTING': False,
     'ATST_REDIRECT': 'https://www.atat.codes/home',
     'CRL_DIRECTORY': 'crl',
-    'CA_CHAIN': '/app/ssl/server-certs/ca-chain.pem'
+    'CA_CHAIN': 'ssl/server-certs/ca-chain.pem'
 }
 
 def make_app(config):
     app = Flask(__name__)
     app.config.update(config_defaults)
     app.config.update(config)
+    _make_crl_validator(app)
+    _apply_apis(app)
 
     return app
 
@@ -37,3 +42,12 @@ def make_config():
 def configured_app():
     config = make_config()
     return make_app(config)
+
+def _apply_apis(app):
+    app.register_blueprint(make_api_v1(), url_prefix='/api/v1')
+
+def _make_crl_validator(app):
+    crl_locations = []
+    for filename in pathlib.Path(app.config['CRL_DIRECTORY']).glob('*'):
+        crl_locations.append(filename.absolute())
+    app.crl_validator = Validator(roots=[app.config['CA_CHAIN']], crl_locations=crl_locations)
