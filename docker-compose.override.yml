@@ -5,10 +5,6 @@ services:
       context: ./
       args:
         env: dev
-    networks:
-      default:
-        aliases:
-          - ${DOMAIN}
     volumes:
       - './:/app'
     environment:
