@@ -32,4 +32,4 @@ def is_valid_certificate(request):
 def set_bearer_token(response):
     access_token = app.token_manager.token()
     response.set_cookie('bearer-token', value=access_token,
-            domain='.atat.codes', secure=True)
+            domain='.atat.codes', secure=True, httponly=True)
