@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx:python3.6-alpine3.7
+FROM tiangolo/uwsgi-nginx:python3.6
 
 RUN pip install --upgrade pip
 RUN pip install pipenv
