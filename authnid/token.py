@@ -6,7 +6,7 @@ import binascii
 
 class TokenManager():
     def __init__(self, secret):
-        self._secret = secret
+        self._secret = secret.encode()
 
     # stub user ID until we implement it
     def token(self, user_id=10000):
@@ -26,6 +26,7 @@ class TokenManager():
         return str(int(time.time()))
 
     def _encode(self, payload):
-        hashed = hmac.new(self._secret.encode(), payload.encode(), hashlib.sha256)
+        payload_bytes = payload.encode()
+        hashed = hmac.new(self._secret, payload_bytes, hashlib.sha256)
         hexed = binascii.hexlify(hashed.digest())
-        return base64.b64encode(hexed + b':' + payload.encode()).decode()
+        return base64.b64encode(hexed + b':' + payload_bytes).decode()
