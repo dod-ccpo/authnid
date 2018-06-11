@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 Flask = "==1.0.2"
 certvalidator = "*"
-pyjwt = "*"
 
 [dev-packages]
 requests = "*"
