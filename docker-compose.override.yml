@@ -5,10 +5,6 @@ services:
       context: ./
       args:
         env: dev
-    networks:
-      default:
-        aliases:
-          - ${DOMAIN}
     volumes:
       - './:/app'
     environment:
@@ -28,7 +24,7 @@ services:
       # this sets the CA for the test requests
       - REQUESTS_CA_BUNDLE=/app/ssl/certificate-authority/ca.crt
       # - SEED=0
-    command: /bin/sh -c "while true; do sleep 1; done"
+    command: bash -c "while true; do sleep 1; done"
     volumes:
       - ./:/app
       - ./ssl:/etc/ssl
