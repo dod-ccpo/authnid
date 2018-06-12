@@ -10,12 +10,10 @@ app = configured_app()
 def log_in_user():
     # FIXME: Find or create user based on the X-Ssl-Client-S-Dn header
     # TODO: Store/log the X-Ssl-Client-Cert in case it's needed?
-    redirect_url = app.config['ATST_REDIRECT']
-
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
-        return construct_redirect(redirect_url)
+        return construct_redirect()
     else:
-        template = render_template('not_authorized.html', atst_url=redirect_url)
+        template = render_template('not_authorized.html', atst_url=app.config['ATST_PASSTHROUGH'])
         response = app.make_response(template)
         response.status_code = 403
 
@@ -28,7 +26,7 @@ def is_valid_certificate(request):
     else:
         return False
 
-def construct_redirect(redirect_url):
+def construct_redirect():
     access_token = app.token_manager.token()
-    url = f'{redirect_url}?bearer-token={access_token}'
+    url = f'{app.config["ATST_REDIRECT"]}?bearer-token={access_token}'
     return app.make_response(redirect(url))

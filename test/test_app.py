@@ -7,7 +7,7 @@ from test.helpers import is_token, relative_dir
 def test_log_in_with_cac(request_client):
     r = request_client.login()
     assert r.status_code == 302
-    assert re.search("www", r.headers["Location"])
+    assert re.search("bearer-token", r.headers["Location"])
 
 
 def test_log_in_fails_without_cac(request_client):

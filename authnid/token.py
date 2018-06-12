@@ -16,14 +16,18 @@ class TokenManager():
     def validate(self, token):
         try:
             decoded = base64.urlsafe_b64decode(token).decode()
-            parts = decoded.split(':', 1)
-            recoded = self._encode(parts[1])
-            return hmac.compare_digest(token, recoded)
+            parts = decoded.split(':')
+            recoded = self._encode(':'.join(parts[1:]))
+            y = self._check_timestamp(parts[2]) and hmac.compare_digest(token, recoded)
+            return y
         except binascii.Error:
             return False
 
+    def _check_timestamp(self, timestamp):
+        return abs(self._timestamp() - int(timestamp)) <= 2
+
     def _timestamp(self):
-        return str(int(time.time()))
+        return int(time.time())
 
     def _encode(self, payload):
         payload_bytes = payload.encode()
