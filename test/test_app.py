@@ -24,12 +24,10 @@ def test_log_in_with_revoked_certificate(request_client):
     assert r.status_code == 403
 
 
-def test_log_in_with_cac_sets_token(request_client):
-    r = request_client.login()
-    # requests considers the value of our Set-Cookie header to be invalid and
-    # so does not set it in the CookieJar (i.e., r.cookies); instead we extract
-    # from the response headers
-    # https://github.com/requests/requests/issues/4414
-    set_cookie = r.headers.get('Set-Cookie')
-    token = re.match('bearer-token=([^;]+)', set_cookie)[1]
+def test_log_in_with_cac_redirects_with_token(request_client):
+    response = request_client.login()
+    location = response.headers['Location']
+    token = re.search('bearer-token=([^;]+)', location)[1]
+    assert len(location) < 2000 # ensure URL is under a safe limit
+    assert response.status_code == 302
     assert is_token(token)

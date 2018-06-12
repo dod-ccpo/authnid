@@ -15,7 +15,7 @@ class TokenManager():
 
     def validate(self, token):
         try:
-            decoded = base64.b64decode(token).decode()
+            decoded = base64.urlsafe_b64decode(token).decode()
             parts = decoded.split(':', 1)
             recoded = self._encode(parts[1])
             return hmac.compare_digest(token, recoded)
@@ -29,4 +29,4 @@ class TokenManager():
         payload_bytes = payload.encode()
         hashed = hmac.new(self._secret, payload_bytes, hashlib.sha256)
         hexed = binascii.hexlify(hashed.digest())
-        return base64.b64encode(hexed + b':' + payload_bytes).decode()
+        return base64.urlsafe_b64encode(hexed + b':' + payload_bytes).decode()

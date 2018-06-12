@@ -13,8 +13,7 @@ def log_in_user():
     redirect_url = app.config['ATST_REDIRECT']
 
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
-        response = app.make_response(redirect(redirect_url))
-        set_bearer_token(response)
+        return construct_redirect(redirect_url)
     else:
         template = render_template('not_authorized.html', atst_url=redirect_url)
         response = app.make_response(template)
@@ -29,7 +28,7 @@ def is_valid_certificate(request):
     else:
         return False
 
-def set_bearer_token(response):
+def construct_redirect(redirect_url):
     access_token = app.token_manager.token()
-    response.set_cookie('bearer-token', value=access_token,
-            domain='.atat.codes', secure=True, httponly=True)
+    url = f'{redirect_url}?bearer-token={access_token}'
+    return app.make_response(redirect(url))
