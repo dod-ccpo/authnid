@@ -1,7 +1,7 @@
 # Import installed packages
 import requests
 import re
-from test.helpers import is_token
+from test.helpers import is_token, relative_dir
 
 
 def test_log_in_with_cac(request_client):
@@ -17,8 +17,8 @@ def test_log_in_fails_without_cac(request_client):
 
 def test_log_in_with_revoked_certificate(request_client):
     certs=(
-        "/app/ssl/client-certs/bad-atat.mil.crt",
-        "/app/ssl/client-certs/bad-atat.mil.key",
+        relative_dir("ssl/client-certs/bad-atat.mil.crt"),
+        relative_dir("ssl/client-certs/bad-atat.mil.key"),
     )
     r = request_client.login(certs)
     assert r.status_code == 403

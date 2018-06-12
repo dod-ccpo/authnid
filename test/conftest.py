@@ -1,6 +1,7 @@
 import pytest
 import requests
 from authnid.make_app import make_app
+from .helpers import relative_dir
 import os
 
 
@@ -23,8 +24,8 @@ def request_client(server_api):
         def login(
             self,
             certs=(
-                "/app/ssl/client-certs/atat.mil.crt",
-                "/app/ssl/client-certs/atat.mil.key",
+                relative_dir("ssl/client-certs/atat.mil.crt"),
+                relative_dir("ssl/client-certs/atat.mil.key"),
             ),
         ):
             return self.client.get(self.server_api, cert=certs, allow_redirects=False)
