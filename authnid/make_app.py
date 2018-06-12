@@ -19,20 +19,20 @@ def make_app(config):
     return app
 
 def make_config():
-    CONFIG_FILENAME = os.path.join(
+    BASE_CONFIG_FILENAME = os.path.join(
         os.path.dirname(__file__),
-        '..',
-        os.getenv('CONFIG_FILENAME', 'config.ini')
+        '../config/base.ini',
     )
-    if os.path.exists(CONFIG_FILENAME):
-        config = ConfigParser()
-        config.optionxform = str
-        config.read(CONFIG_FILENAME)
+    ENV_CONFIG_FILENAME = os.path.join(
+        os.path.dirname(__file__),
+        '../config/',
+        '{}.ini'.format(os.getenv('FLASK_ENV', 'dev').lower())
+    )
+    config = ConfigParser()
+    config.optionxform = str
+    config.read([BASE_CONFIG_FILENAME, ENV_CONFIG_FILENAME])
 
-        return config._sections['default']
-    else:
-
-        return config_defaults
+    return config._sections['default']
 
 def configured_app():
     config = make_config()
