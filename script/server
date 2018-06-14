@@ -10,4 +10,4 @@ cd "$(dirname "$0")/.."
 script/update
 
 # start the docker container
-script/up
+script/up -d
