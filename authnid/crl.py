@@ -25,7 +25,7 @@ class Validator():
         return trust_roots
 
     def validate(self, cert):
-        validator = CertificateValidator(cert, validation_context=self.context)
+        validator = CertificateValidator(cert, intermediate_certs=self.trust_roots, validation_context=self.context)
         try:
             validator.validate_usage(set([]))
             return True
