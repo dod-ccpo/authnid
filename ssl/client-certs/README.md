@@ -16,7 +16,7 @@ Running the scripts verifies that the good one is good and the bad one is bad.
 We can also verify with OpenSSL. First concatenate the CA Bundle and the CRL:
 
 ```
-cat ssl/server-certs/ca-chain.pem ssl/client-certs/client-ca.crl > /tmp/test/pem
+cat ssl/server-certs/ca-chain.pem ssl/client-certs/client-ca.crl > /tmp/test.pem
 ```
 
 Verify the certs:

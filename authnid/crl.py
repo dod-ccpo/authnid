@@ -14,9 +14,9 @@ class Validator():
 
     def _add_crls(self, locations):
         for filename in locations:
-            with open(filename, 'rb') as crl:
-                c = crypto.load_crl(crypto.FILETYPE_PEM, crl.read())
-                self._add_carefully('add_crl', c)
+            with open(filename, 'rb') as crl_file:
+                crl = crypto.load_crl(crypto.FILETYPE_PEM, crl_file.read())
+                self._add_carefully('add_crl', crl)
 
     def _add_roots(self, roots):
         for filename in roots:
