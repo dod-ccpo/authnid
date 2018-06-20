@@ -4,7 +4,7 @@
 
 ## Back end local development
 
-To build, run `script/sertup`.  `script/server` starts the stack with Docker Compose:
+To build, run `script/setup`.  `script/server` starts the stack with Docker Compose:
 
 * DNS will handle redirecting `dev.cac.atat.codes` to localhost. So, in your browser, go to: http://dev.cac.atat.codes.
 
