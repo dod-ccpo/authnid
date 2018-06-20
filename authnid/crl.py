@@ -7,6 +7,7 @@ from OpenSSL import crypto, SSL
 class Validator():
     def __init__(self, crl_locations=[], roots=[], store=crypto.X509Store()):
         self.store = store
+        self.errors = []
         self._add_crls(crl_locations)
         self._add_roots(roots)
         self.store.set_flags(crypto.X509StoreFlags.CRL_CHECK)
@@ -50,5 +51,6 @@ class Validator():
             context.verify_certificate()
             return True
         except crypto.X509StoreContextError as err:
+            self.errors.append(err)
             return False
 
