@@ -6,8 +6,6 @@
 
 To build, run `script/setup`.  `script/server` starts the stack with Docker Compose:
 
-* DNS will handle redirecting `dev.cac.atat.codes` to localhost. So, in your browser, go to: http://dev.cac.atat.codes.
-
 The `docker-compose.override.yml` file for local development has a host volume with your app files inside the container for rapid iteration. So you can update your code and it will be the same code (updated) inside the container. You have to restart the server, but you don't need to rebuild the image to test a change. Make sure you use this only for local development. Your final production images should be built with the latest version of your code and do not depend on host volumes mounted.
 
 ### Back end tests
