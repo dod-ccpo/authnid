@@ -1,6 +1,6 @@
 import pytest
 import requests
-from authnid.make_app import make_app
+from authnid.make_app import make_app, make_config
 from .helpers import relative_dir
 import os
 
@@ -35,7 +35,8 @@ def request_client(server_api):
 
 @pytest.fixture
 def app():
-    return make_app({})
+    config = make_config()
+    return make_app(config)
 
 
 @pytest.fixture
