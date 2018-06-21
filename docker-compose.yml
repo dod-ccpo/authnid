@@ -3,4 +3,15 @@ services:
   backend:
     build: ./
     ports:
-      - "8001:443"
+      - "80:80"
+      - "443:443"
+    environment:
+      - FLASK_ENV=dev
+    links:
+      - db:db
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=authnid
+      - POSTGRES_USER=atat
+      - POSTGRES_PASSWORD=password

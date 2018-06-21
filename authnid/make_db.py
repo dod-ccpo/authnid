@@ -1,0 +1,22 @@
+import psycopg2
+
+
+def make_db(config):
+    connection = psycopg2.connect(config['DATABASE_URI'])
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        BEGIN;
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        CREATE TABLE IF NOT EXISTS users (
+            id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+            email VARCHAR(254) NOT NULL,
+            dod_id VARCHAR(16),
+            first_name VARCHAR(128),
+            last_name VARCHAR(128)
+        );
+        CREATE INDEX IF NOT EXISTS users_email ON users (email);
+        COMMIT;
+    ''')
+
+    return cursor

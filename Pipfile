@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 Flask = "==1.0.2"
 pyopenssl = "*"
+"psycopg2-binary" = "*"
 
 [dev-packages]
 requests = "*"

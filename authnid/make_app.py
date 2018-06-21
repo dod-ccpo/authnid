@@ -5,6 +5,7 @@ from configparser import ConfigParser
 from .crl import Validator
 from .token import TokenManager
 from .api.v1.routes import make_api as make_api_v1
+from .make_db import make_db
 
 config_defaults = {
     "PORT": 4567,
@@ -21,6 +22,9 @@ def make_app(config):
     app = Flask(__name__)
     app.config.update(config_defaults)
     app.config.update(config)
+
+    db = make_db(config)
+
     _make_token_manager(app)
     _make_crl_validator(app)
     _apply_apis(app)
