@@ -1,6 +1,24 @@
+from psycopg2.extensions import AsIs
+
 class UserRepo():
     def __init__(self, db):
         self.db = db
+
+    IS_MATCH = '(%s) = %s'
+
+    def has_user(self, **kwargs):
+        match = self.db.mogrify(
+                    self.IS_MATCH,
+                    (AsIs(','.join(kwargs.keys())), tuple(kwargs.values()))
+                ).decode()
+        self.db.execute("""
+        SELECT CASE WHEN EXISTS (
+            SELECT * FROM users WHERE {}
+        )
+        THEN true
+        ELSE false END
+        """.format(match))
+        return self.db.fetchone()[0]
 
     def add_user(self, email=None, dod_id=None, first_name=None, last_name=None):
         self.db.execute("""
