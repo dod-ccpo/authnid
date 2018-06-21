@@ -24,8 +24,6 @@ The tests run with Pytest. Modify and add tests to `./tests/`.
 
 The `ssl` directory contains example certs for configuring the regular server SSL, client authentication, and the client certificates currently written to the sample PIVKey. It also contains a script, `make-certs.sh`, which can be used to write a new certificate authority and sign a CSR for the server SSL. The script writes the CSR to list multiple valid hosts (`subjectAltName`) so that the final cert can work across environments (like docker, for instance, where it's host name is "backend").
 
-note: add info about the intermediate CAs
-
 ### Intermediate CAs
 
 We are using `pyopenssl` for CRL checks. Currently, this requires that the intermediate CAs for any client CAs be in the CA chain. If you have a DDS CAC card and want to test for local development, you need to add the right intermediate CA before spinning up the server. To do this:
