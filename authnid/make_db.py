@@ -1,9 +1,10 @@
 import psycopg2
+import psycopg2.extras
 
 
 def make_db(config):
     connection = psycopg2.connect(config['DATABASE_URI'])
-    cursor = connection.cursor()
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cursor.execute('''
         BEGIN;
