@@ -11,6 +11,7 @@ def log_in_user():
     # FIXME: Find or create user based on the X-Ssl-Client-S-Dn header
     # TODO: Store/log the X-Ssl-Client-Cert in case it's needed?
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
+        s_dn = request.environ['HTTP_X_SSL_CLIENT_S_DN']
         return construct_redirect()
     else:
         template = render_template('not_authorized.html', atst_url=app.config['ATST_PASSTHROUGH'])
