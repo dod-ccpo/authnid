@@ -10,13 +10,12 @@ def db():
 
 @pytest.fixture(scope="module")
 def repo():
-    return UserRepo(db())
+    return UserRepo(db(), autocommit=False)
 
 @pytest.fixture(autouse=True)
 def reset(db):
-    db.execute("BEGIN;")
     yield
-    db.execute("ROLLBACK;")
+    db.connection.rollback()
 
 def test_add_user(repo):
     uuid = repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
