@@ -36,3 +36,10 @@ class UserRepo():
         self.db.execute("SELECT * FROM users WHERE id=%s", (uuid,))
         return self.db.fetchone()
 
+    def count(self):
+        self.db.execute("SELECT count(*) FROM users")
+        return self.db.fetchone()[0]
+
+    def all(self):
+        self.db.execute("SELECT * FROM users")
+        return self.db.fetchall()

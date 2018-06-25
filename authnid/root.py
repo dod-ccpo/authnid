@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, render_template
 from flask import current_app as app
+from .utils import parse_sdn
 
 root = Blueprint('home', __name__)
 
@@ -9,6 +10,7 @@ def log_in_user():
     # TODO: Store/log the X-Ssl-Client-Cert in case it's needed?
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
         sdn = request.environ.get('HTTP_X_SSL_CLIENT_S_DN')
+        ensure_user_exists(sdn)
         return construct_redirect()
     else:
         template = render_template('not_authorized.html', atst_url=app.config['ATST_PASSTHROUGH'])
@@ -31,3 +33,15 @@ def construct_redirect():
     access_token = app.token_manager.token()
     url = f'{app.config["ATST_REDIRECT"]}?bearer-token={access_token}'
     return app.make_response(redirect(url))
+
+STUB_EMAIL = 'artgarfunkel@gmail.com'
+# TODO: error handling for bad SDN
+# TODO: where is the email in the cert?
+def ensure_user_exists(sdn):
+    sdn_parts = parse_sdn(sdn)
+    # placeholder
+    sdn_parts['email'] = STUB_EMAIL
+    if app.user_repo.has_user(**sdn_parts):
+        return
+    else:
+        app.user_repo.add_user(**sdn_parts)

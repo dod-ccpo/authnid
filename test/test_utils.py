@@ -1,7 +1,6 @@
 import pytest
+from .helpers import DOD_SDN
 import authnid.utils as utils
-
-DOD_SDN = 'CN=GARFUNKEL.ART.G.5892460358,OU=OTHER,OU=PKI,OU=DoD,O=U.S. Government,C=US'
 
 def test_parse_sdn():
     parsed = utils.parse_sdn(DOD_SDN)

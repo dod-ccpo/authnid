@@ -5,7 +5,7 @@ services:
     ports:
       - "8001:443"
     environment:
-      - FLASK_ENV=dev
+      - FLASK_ENV
     links:
       - db:db
   db:

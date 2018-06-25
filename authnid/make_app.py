@@ -9,6 +9,8 @@ from .api.v1.routes import make_api as make_api_v1
 from .make_db import make_db
 from .user_repo import UserRepo
 
+FLASK_ENV = os.getenv('FLASK_ENV', 'dev').lower()
+
 config_defaults = {
     "PORT": 4567,
     "DEBUG": True,
@@ -45,7 +47,7 @@ def make_config():
     ENV_CONFIG_FILENAME = os.path.join(
         os.path.dirname(__file__),
         '../config/',
-        '{}.ini'.format(os.getenv('FLASK_ENV', 'dev').lower())
+        '{}.ini'.format(FLASK_ENV)
     )
     config = ConfigParser()
     config.optionxform = str
@@ -75,5 +77,8 @@ def _make_crl_validator(app):
 def _make_token_manager(app):
     app.token_manager = TokenManager(app.config.get("TOKEN_SECRET"))
 
+
 def _make_user_repo(app, db):
-    app.user_repo = UserRepo(db)
+    autocommit = FLASK_ENV != 'test'
+    app.user_repo = UserRepo(db, autocommit=autocommit)
+
