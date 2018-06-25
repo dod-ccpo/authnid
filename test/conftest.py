@@ -36,7 +36,9 @@ def request_client(server_api):
 @pytest.fixture
 def app():
     config = make_config()
-    return make_app(config)
+    app = make_app(config)
+    app.user_repo.autocommit = False
+    return app
 
 
 @pytest.fixture

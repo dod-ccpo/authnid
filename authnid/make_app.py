@@ -4,8 +4,10 @@ from flask import Flask
 from configparser import ConfigParser
 from .crl import Validator
 from .token import TokenManager
+from .root import root
 from .api.v1.routes import make_api as make_api_v1
 from .make_db import make_db
+from .user_repo import UserRepo
 
 config_defaults = {
     "PORT": 4567,
@@ -25,8 +27,11 @@ def make_app(config):
 
     db = make_db(config)
 
+    _make_user_repo(app, db)
     _make_token_manager(app)
     _make_crl_validator(app)
+    # apply root route
+    app.register_blueprint(root)
     _apply_apis(app)
 
     return app
@@ -69,3 +74,6 @@ def _make_crl_validator(app):
 
 def _make_token_manager(app):
     app.token_manager = TokenManager(app.config.get("TOKEN_SECRET"))
+
+def _make_user_repo(app, db):
+    app.user_repo = UserRepo(db)
