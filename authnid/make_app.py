@@ -27,9 +27,10 @@ def make_app(config):
     app.config.update(config_defaults)
     app.config.update(config)
 
-    db = make_db(config)
+    # ensure schema exists
+    make_db(config)
+    app.db_uri = config['DATABASE_URI']
 
-    _make_user_repo(app, db)
     _make_token_manager(app)
     _make_crl_validator(app)
     # apply root route
@@ -76,9 +77,4 @@ def _make_crl_validator(app):
 
 def _make_token_manager(app):
     app.token_manager = TokenManager(app.config.get("TOKEN_SECRET"))
-
-
-def _make_user_repo(app, db):
-    autocommit = FLASK_ENV != 'test'
-    app.user_repo = UserRepo(db, autocommit=autocommit)
 

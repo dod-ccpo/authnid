@@ -1,6 +1,8 @@
 import pytest
 import requests
 from authnid.make_app import make_app, make_config
+from authnid.make_db import connect_db, make_cursor
+from authnid.user_repo import UserRepo
 from .helpers import relative_dir
 import os
 
@@ -36,11 +38,24 @@ def request_client(server_api):
 @pytest.fixture
 def app():
     config = make_config()
-    app = make_app(config)
-    app.user_repo.autocommit = False
-    return app
+    return make_app(config)
 
 
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+@pytest.fixture
+def user_repo(database):
+    return UserRepo(database, autocommit=False)
+
+@pytest.fixture(scope="module")
+def database():
+    db_uri = make_config()['DATABASE_URI']
+    return make_cursor(connect_db(db_uri))
+
+@pytest.fixture(scope='function')
+def reset(database):
+    yield
+    database.execute("TRUNCATE users;")
+    database.connection.commit()

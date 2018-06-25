@@ -4,31 +4,18 @@ from authnid.make_app import make_config
 from authnid.make_db import make_db
 from authnid.user_repo import UserRepo
 
-@pytest.fixture(scope="module")
-def db():
-    return make_db(make_config())
-
-@pytest.fixture(scope="module")
-def repo():
-    return UserRepo(db(), autocommit=False)
-
-@pytest.fixture(autouse=True)
-def reset(db):
-    yield
-    db.connection.rollback()
-
-def test_add_user(repo):
-    uuid = repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
+def test_add_user(user_repo):
+    uuid = user_repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
     assert re.match('[\w-]+', uuid)
 
-def test_get_user(repo):
-    uuid = repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
-    user = repo.get_user(uuid)
+def test_get_user(user_repo):
+    uuid = user_repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
+    user = user_repo.get_user(uuid)
     assert user.get('id') == uuid
     assert user.get('email') == 'artgarfunkel@s_and_g.com'
     assert user.get('dod_id') == '123456'
 
-def test_has_user(repo):
-    uuid = repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
-    assert repo.has_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
-    assert not repo.has_user(email='simon@s_and_g.com', dod_id='123456')
+def test_has_user(user_repo):
+    uuid = user_repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
+    assert user_repo.has_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
+    assert not user_repo.has_user(email='simon@s_and_g.com', dod_id='123456')
