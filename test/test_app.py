@@ -65,4 +65,3 @@ def test_does_not_add_existing_user(monkeypatch, user_repo, client):
         'HTTP_X_SSL_CLIENT_S_DN': DOD_SDN
     })
     assert user_repo.count() == user_count
-

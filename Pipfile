@@ -11,6 +11,8 @@ pyopenssl = "*"
 [dev-packages]
 requests = "*"
 pytest = "*"
+ipython = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.6"
