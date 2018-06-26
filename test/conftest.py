@@ -35,7 +35,7 @@ def request_client(server_api):
     return RequestClient(server_api)
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def app():
     config = make_config()
     return make_app(config)
@@ -52,9 +52,12 @@ def user_repo(database):
 @pytest.fixture(scope="module")
 def database():
     db_uri = make_config()['DATABASE_URI']
-    return make_cursor(connect_db(db_uri))
+    connection = connect_db(db_uri)
+    yield make_cursor(connection)
+    connection.close()
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope='function', autouse=True)
 def reset(database):
     yield
     database.execute("TRUNCATE users;")
