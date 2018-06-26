@@ -49,14 +49,10 @@ def construct_redirect():
     url = f'{app.config["ATST_REDIRECT"]}?bearer-token={access_token}'
     return app.make_response(redirect(url))
 
-STUB_EMAIL = 'artgarfunkel@gmail.com'
 # TODO: error handling for bad SDN
-# TODO: where is the email in the cert?
 # TODO: return uuid
 def ensure_user_exists(sdn):
     sdn_parts = parse_sdn(sdn)
-    # placeholder
-    sdn_parts['email'] = STUB_EMAIL
     if app.user_repo.has_user(**sdn_parts):
         return
     else:
