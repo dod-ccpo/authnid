@@ -10,7 +10,7 @@ def test_add_user(user_repo):
 
 def test_get_user(user_repo):
     uuid = user_repo.add_user(email='artgarfunkel@s_and_g.com', dod_id='123456')
-    user = user_repo.get_user(uuid)
+    user = user_repo.get_user(id=uuid)
     assert user.get('id') == uuid
     assert user.get('email') == 'artgarfunkel@s_and_g.com'
     assert user.get('dod_id') == '123456'

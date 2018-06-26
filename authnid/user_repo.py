@@ -7,11 +7,14 @@ class UserRepo():
 
     IS_MATCH = '(%s) = %s'
 
-    def has_user(self, **kwargs):
-        match = self.cursor.mogrify(
+    def _build_match(self, **kwargs):
+        return self.cursor.mogrify(
                     self.IS_MATCH,
                     (AsIs(','.join(kwargs.keys())), tuple(kwargs.values()))
                 ).decode()
+
+    def has_user(self, **kwargs):
+        match = self._build_match(**kwargs)
         self.cursor.execute("""
         SELECT CASE WHEN EXISTS (
             SELECT * FROM users WHERE {}
@@ -32,8 +35,9 @@ class UserRepo():
         uuid = self.cursor.fetchone()[0]
         return uuid
 
-    def get_user(self, uuid):
-        self.cursor.execute("SELECT * FROM users WHERE id=%s", (uuid,))
+    def get_user(self, **kwargs):
+        match = self._build_match(**kwargs)
+        self.cursor.execute("SELECT * FROM users WHERE {}".format(match))
         return self.cursor.fetchone()
 
     def count(self):
