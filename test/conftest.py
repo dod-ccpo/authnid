@@ -56,7 +56,6 @@ def database():
     yield make_cursor(connection)
     connection.close()
 
-
 @pytest.fixture(scope='function', autouse=True)
 def reset(database):
     yield

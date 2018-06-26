@@ -47,3 +47,12 @@ class UserRepo():
     def all(self):
         self.cursor.execute("SELECT * FROM users")
         return self.cursor.fetchall()
+
+# TODO: error handling for bad SDN
+# TODO: return uuid
+    def ensure_user_exists(self, **kwargs):
+        if self.has_user(**kwargs):
+            user = self.get_user(**kwargs)
+            return user.get('id')
+        else:
+            return self.add_user(**kwargs)

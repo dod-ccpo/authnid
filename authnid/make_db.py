@@ -2,10 +2,10 @@ import psycopg2
 import psycopg2.extras
 
 def connect_db(uri):
-    return psycopg2.connect(uri)
+    return psycopg2.connect(uri, cursor_factory=psycopg2.extras.DictCursor)
 
 def make_cursor(connection):
-    return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    return connection.cursor()
 
 def make_db(config):
     connection = connect_db(config['DATABASE_URI'])

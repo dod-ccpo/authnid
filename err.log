@@ -1,0 +1,979 @@
+db uses an image, skipping
+Building backend
+Step 1/10 : FROM tiangolo/uwsgi-nginx:python3.6
+ ---> b26e62859311
+Step 2/10 : RUN pip install --upgrade pip
+ ---> Using cache
+ ---> 2dadb21b0482
+Step 3/10 : RUN pip install pipenv
+ ---> Using cache
+ ---> cba1b30b75ae
+Step 4/10 : COPY ssl/*.conf /etc/nginx/conf.d/
+ ---> Using cache
+ ---> d6f53af8f765
+Step 5/10 : COPY ssl/server-certs/ /etc/ssl/
+ ---> Using cache
+ ---> 1641e582692e
+Step 6/10 : COPY ./ /app
+ ---> 278d812fbafb
+Step 7/10 : WORKDIR /app/
+Removing intermediate container 380d47577f02
+ ---> 3f54a2f05783
+Step 8/10 : RUN pipenv install --system --deploy --ignore-pipfile
+ ---> Running in d8bf9006b24c
+Installing dependencies from Pipfile.lock (5df9c0)…
+Removing intermediate container d8bf9006b24c
+ ---> 52af1806b43a
+Step 9/10 : ENV UWSGI_INI /app/uwsgi.ini
+ ---> Running in c0e19b8331ab
+Removing intermediate container c0e19b8331ab
+ ---> cdc30bbe327f
+Step 10/10 : EXPOSE 80 443
+ ---> Running in e815727f4e2c
+Removing intermediate container e815727f4e2c
+ ---> 10e5ef8fdd7a
+[Warning] One or more build-args [env] were not consumed
+Successfully built 10e5ef8fdd7a
+Successfully tagged authnid_backend:latest
+Building backend-tests
+Step 1/8 : FROM python:3.6
+ ---> 29d2f3226daf
+Step 2/8 : RUN pip install --upgrade pip
+ ---> Using cache
+ ---> b4edf3b9017c
+Step 3/8 : RUN pip install pipenv
+ ---> Using cache
+ ---> 6a5864610227
+Step 4/8 : EXPOSE 8888
+ ---> Using cache
+ ---> ad081530ce94
+Step 5/8 : COPY ./ /app
+ ---> b1f219726b6e
+Step 6/8 : WORKDIR /app/
+Removing intermediate container cfe0e1aaaf05
+ ---> dc51016510ac
+Step 7/8 : RUN pipenv install --system --dev
+ ---> Running in a5809f93bc93
+Installing dependencies from Pipfile.lock (5df9c0)…
+Ignoring appnope: markers 'sys_platform == "darwin"' don't match your environment
+Looking in indexes: https://pypi.python.org/simple
+Removing intermediate container a5809f93bc93
+ ---> 338527e38fbe
+Step 8/8 : ENV PYTHONPATH=/app
+ ---> Running in 3c38b2be2467
+Removing intermediate container 3c38b2be2467
+ ---> b83c5c7776e3
+[Warning] One or more build-args [env] were not consumed
+Successfully built b83c5c7776e3
+Successfully tagged authnid_backend-tests:latest
+Recreating authnid_backend-tests_1 ... 
+authnid_db_1 is up-to-date
+Recreating authnid_backend_1       ... 
+[1A[2KRecreating authnid_backend_1       ... [32mdone[0m[1B[2A[2KRecreating authnid_backend-tests_1 ... [32mdone[0m[2B==> Running tests…
+[1m============================= test session starts ==============================[0m
+platform linux -- Python 3.6.5, pytest-3.6.2, py-1.5.3, pluggy-0.6.0
+rootdir: /app, inifile:
+[1mcollecting 0 items                                                             [0m[1mcollecting 4 items                                                             [0m[1mcollecting 7 items                                                             [0m[1mcollecting 9 items                                                             [0m[1mcollecting 12 items                                                            [0m[1mcollecting 17 items                                                            [0m[1mcollecting 19 items                                                            [0m[1mcollecting 21 items                                                            [0m[1mcollected 21 items                                                             [0m
+
+test/test_app.py ....[36m                                                    [ 19%][0m
+test/test_crl.py ...[36m                                                     [ 33%][0m
+test/test_root.py .FE[36m                                                    [ 42%][0m
+test/test_token_manager.py EEE[36m                                           [ 57%][0m
+test/test_user_repo.py EEEEE[36m                                             [ 80%][0m
+test/test_utils.py EE[36m                                                    [ 90%][0m
+test/api/v1/test_api.py EE[36m                                               [100%][0m
+
+==================================== ERRORS ====================================
+_____________ ERROR at teardown of test_does_not_add_existing_user _____________
+
+database = <cursor object at 0x7fc0e0373648; closed: 0>
+
+[1m    @pytest.fixture(scope='function', autouse=True)[0m
+[1m    def reset(database):[0m
+[1m        yield[0m
+[1m>       database.execute("TRUNCATE users;")[0m
+
+[1m[31mtest/conftest.py[0m:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cursor object at 0x7fc0e0373648; closed: 0>, query = 'TRUNCATE users;'
+vars = None
+
+[1m    def execute(self, query, vars=None):[0m
+[1m        self.index = {}[0m
+[1m        self._query_executed = 1[0m
+[1m>       return super(DictCursor, self).execute(query, vars)[0m
+[1m[31mE       psycopg2.OperationalError: server closed the connection unexpectedly[0m
+[1m[31mE       	This probably means the server terminated abnormally[0m
+[1m[31mE       	before or while processing the request.[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/extras.py[0m:144: OperationalError
+____________________ ERROR at setup of test_can_build_token ____________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+__________________ ERROR at setup of test_can_validate_token ___________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+______________ ERROR at setup of test_wont_validate_expired_token ______________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_______________________ ERROR at setup of test_add_user ________________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_______________________ ERROR at setup of test_get_user ________________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_______________________ ERROR at setup of test_has_user ________________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+______________ ERROR at setup of test_ensure_user_exists_new_user ______________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+___________ ERROR at setup of test_ensure_user_exists_existing_user ____________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not connect to server: Connection refused[0m
+[1m[31mE       	Is the server running on host "db" (172.18.0.2) and accepting[0m
+[1m[31mE       	TCP/IP connections on port 5432?[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_______________________ ERROR at setup of test_parse_sdn _______________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not translate host name "db" to address: Name or service not known[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_____________________ ERROR at setup of test_parse_bad_sdn _____________________
+
+[1m    @pytest.fixture(scope="module")[0m
+[1m    def database():[0m
+[1m        db_uri = make_config()['DATABASE_URI'][0m
+[1m>       connection = connect_db(db_uri)[0m
+
+[1m[31mtest/conftest.py[0m:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not translate host name "db" to address: Name or service not known[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+_________________ ERROR at setup of test_validate_valid_token __________________
+
+[1m    @pytest.fixture(scope='module')[0m
+[1m    def app():[0m
+[1m        config = make_config()[0m
+[1m>       return make_app(config)[0m
+
+[1m[31mtest/conftest.py[0m:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_app.py[0m:31: in make_app
+[1m    make_db(config)[0m
+[1m[31mauthnid/make_db.py[0m:11: in make_db
+[1m    connection = connect_db(config['DATABASE_URI'])[0m
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not translate host name "db" to address: Name or service not known[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+________________ ERROR at setup of test_validate_invalid_token _________________
+
+[1m    @pytest.fixture(scope='module')[0m
+[1m    def app():[0m
+[1m        config = make_config()[0m
+[1m>       return make_app(config)[0m
+
+[1m[31mtest/conftest.py[0m:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31mauthnid/make_app.py[0m:31: in make_app
+[1m    make_db(config)[0m
+[1m[31mauthnid/make_db.py[0m:11: in make_db
+[1m    connection = connect_db(config['DATABASE_URI'])[0m
+[1m[31mauthnid/make_db.py[0m:5: in connect_db
+[1m    return psycopg2.connect(uri)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'postgres://atat:password@db/authnid', connection_factory = None
+cursor_factory = None, kwargs = {}, kwasync = {}
+
+[1m    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):[0m
+[1m        """[0m
+[1m        Create a new database connection.[0m
+[1m    [0m
+[1m        The connection parameters can be specified as a string:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect("dbname=test user=postgres password=secret")[0m
+[1m    [0m
+[1m        or using a set of keyword arguments:[0m
+[1m    [0m
+[1m            conn = psycopg2.connect(database="test", user="postgres", password="secret")[0m
+[1m    [0m
+[1m        Or as a mix of both. The basic connection parameters are:[0m
+[1m    [0m
+[1m        - *dbname*: the database name[0m
+[1m        - *database*: the database name (only as keyword argument)[0m
+[1m        - *user*: user name used to authenticate[0m
+[1m        - *password*: password used to authenticate[0m
+[1m        - *host*: database host address (defaults to UNIX socket if not provided)[0m
+[1m        - *port*: connection port number (defaults to 5432 if not provided)[0m
+[1m    [0m
+[1m        Using the *connection_factory* parameter a different class or connections[0m
+[1m        factory can be specified. It should be a callable object taking a dsn[0m
+[1m        argument.[0m
+[1m    [0m
+[1m        Using the *cursor_factory* parameter, a new default cursor factory will be[0m
+[1m        used by cursor().[0m
+[1m    [0m
+[1m        Using *async*=True an asynchronous connection will be created. *async_* is[0m
+[1m        a valid alias (for Python versions where ``async`` is a keyword).[0m
+[1m    [0m
+[1m        Any other keyword parameter will be passed to the underlying client[0m
+[1m        library: the list of supported parameters depends on the library version.[0m
+[1m    [0m
+[1m        """[0m
+[1m        kwasync = {}[0m
+[1m        if 'async' in kwargs:[0m
+[1m            kwasync['async'] = kwargs.pop('async')[0m
+[1m        if 'async_' in kwargs:[0m
+[1m            kwasync['async_'] = kwargs.pop('async_')[0m
+[1m    [0m
+[1m        if dsn is None and not kwargs:[0m
+[1m            raise TypeError('missing dsn and no parameters')[0m
+[1m    [0m
+[1m        dsn = _ext.make_dsn(dsn, **kwargs)[0m
+[1m>       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)[0m
+[1m[31mE       psycopg2.OperationalError: could not translate host name "db" to address: Name or service not known[0m
+
+[1m[31m/usr/local/lib/python3.6/site-packages/psycopg2/__init__.py[0m:130: OperationalError
+=================================== FAILURES ===================================
+[31m[1m_______________________ test_does_not_add_existing_user ________________________[0m
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fc0dcd7c208>
+user_repo = <authnid.user_repo.UserRepo object at 0x7fc0dcd7c2b0>
+client = <FlaskClient <Flask 'authnid.make_app'>>
+dod_user = {'dod_id': '5892460358', 'first_name': 'ART', 'last_name': 'GARFUNKEL'}
+
+[1m    def test_does_not_add_existing_user(monkeypatch, user_repo, client, dod_user):[0m
+[1m        monkeypatch.setattr('authnid.root.is_valid_certificate', lambda r: True)[0m
+[1m        user_repo.add_user(**dod_user)[0m
+[1m        user_count = user_repo.count()[0m
+[1m        resp = client.get('/', environ_base={[0m
+[1m            'HTTP_X_SSL_CLIENT_VERIFY': 'SUCCESS',[0m
+[1m>           'HTTP_X_SSL_CLIENT_S_DN': DOD_SDN[0m
+[1m        })[0m
+
+[1m[31mtest/test_root.py[0m:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[1m[31m/usr/local/lib/python3.6/site-packages/werkzeug/test.py[0m:830: in get
+[1m    return self.open(*args, **kw)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/testing.py[0m:200: in open
+[1m    follow_redirects=follow_redirects[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/werkzeug/test.py[0m:803: in open
+[1m    response = self.run_wsgi_app(environ, buffered=buffered)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/werkzeug/test.py[0m:716: in run_wsgi_app
+[1m    rv = run_wsgi_app(self.application, environ, buffered=buffered)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/werkzeug/test.py[0m:923: in run_wsgi_app
+[1m    app_rv = app(environ, start_response)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:2309: in __call__
+[1m    return self.wsgi_app(environ, start_response)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:2295: in wsgi_app
+[1m    response = self.handle_exception(e)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:1741: in handle_exception
+[1m    reraise(exc_type, exc_value, tb)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/_compat.py[0m:35: in reraise
+[1m    raise value[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:2292: in wsgi_app
+[1m    response = self.full_dispatch_request()[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:1815: in full_dispatch_request
+[1m    rv = self.handle_user_exception(e)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:1718: in handle_user_exception
+[1m    reraise(exc_type, exc_value, tb)[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/_compat.py[0m:35: in reraise
+[1m    raise value[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:1813: in full_dispatch_request
+[1m    rv = self.dispatch_request()[0m
+[1m[31m/usr/local/lib/python3.6/site-packages/flask/app.py[0m:1799: in dispatch_request
+[1m    return self.view_functions[rule.endpoint](**req.view_args)[0m
+[1m[31mauthnid/root.py[0m:16: in log_in_user
+[1m    uuid = app.user_repo.ensure_user_exists(**sdn_parts)[0m
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <authnid.user_repo.UserRepo object at 0x7fc0dcd77cf8>
+kwargs = {'dod_id': '5892460358', 'first_name': 'ART', 'last_name': 'GARFUNKEL'}
+user = ('44a22124-b61e-47d2-b007-54a0a67b9fc9', None, '5892460358', 'ART', 'GARFUNKEL')
+
+[1m    def ensure_user_exists(self, **kwargs):[0m
+[1m        if self.has_user(**kwargs):[0m
+[1m            user = self.get_user(**kwargs)[0m
+[1m>           return user.get('id')[0m
+[1m[31mE           AttributeError: 'tuple' object has no attribute 'get'[0m
+
+[1m[31mauthnid/user_repo.py[0m:56: AttributeError
+[31m[1m================ 1 failed, 8 passed, 13 error in 78.70 seconds =================[0m
