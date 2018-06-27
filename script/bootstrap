@@ -6,5 +6,9 @@
 set -e
 cd "$(dirname "$0")/.."
 
+# Install Python dependencies
+pipenv install --dev
+
+# build docker container
 docker-compose build
 docker-compose run backend pipenv run alembic upgrade head

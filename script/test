@@ -6,18 +6,11 @@
 set -e
 cd "$(dirname "$0")/.."
 
-# ensure everything in the app is up to date.
-script/update
 # bring up the application stack
-FLASK_ENV=test script/up -d
+script/up -d
 
 #TODO wait for application to become responsive
 
 echo "==> Running tests…"
 
-# if [ -n "$1" ]; then
-  # pass arguments to test call. This is useful for calling a single test.
-  # bin/rake test "$1"
-# else
-  docker-compose run backend-tests pytest $*
-# fi
+FLASK_ENV=test SERVER_NAME=localhost:8001 pipenv run pytest $*

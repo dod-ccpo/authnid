@@ -1,9 +1,40 @@
+import os
 import re
 import pytest
 import requests
+import urllib3
 from test.helpers import is_token, relative_dir
 from authnid.make_app import make_config
 from authnid.user_repo import UserRepo
+
+@pytest.fixture
+def server_api():
+    host = os.getenv("SERVER_NAME")
+    server_name = f"https://{host}"
+    return server_name
+
+@pytest.fixture
+def request_client(server_api):
+
+    class RequestClient():
+
+        def __init__(self, server_api):
+            self.client = requests.Session()
+            # we do not care about the host cert here
+            self.client.verify = False
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            self.server_api = server_api
+
+        def login(
+            self,
+            certs=(
+                relative_dir("ssl/client-certs/atat.mil.crt"),
+                relative_dir("ssl/client-certs/atat.mil.key"),
+            )
+        ):
+            return self.client.get(self.server_api, cert=certs, allow_redirects=False)
+
+    return RequestClient(server_api)
 
 
 def test_log_in_with_cac(request_client):
