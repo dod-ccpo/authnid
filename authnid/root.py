@@ -12,9 +12,10 @@ def log_in_user():
     # TODO: Store/log the X-Ssl-Client-Cert in case it's needed?
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
         sdn = request.environ.get('HTTP_X_SSL_CLIENT_S_DN')
+        # TODO: error handling for bad SDN, database errors, etc
         sdn_parts = parse_sdn(sdn)
         uuid = app.user_repo.ensure_user_exists(**sdn_parts)
-        return construct_redirect()
+        return construct_redirect(uuid)
     else:
         template = render_template('not_authorized.html', atst_url=app.config['ATST_PASSTHROUGH'])
         response = app.make_response(template)
@@ -45,7 +46,7 @@ def is_valid_certificate(request):
     else:
         return False
 
-def construct_redirect():
-    access_token = app.token_manager.token()
+def construct_redirect(uuid):
+    access_token = app.token_manager.token(uuid)
     url = f'{app.config["ATST_REDIRECT"]}?bearer-token={access_token}'
     return app.make_response(redirect(url))

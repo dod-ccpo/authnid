@@ -10,7 +10,7 @@ class TokenManager():
         self._secret = secret.encode()
 
     # stub user ID until we implement it
-    def token(self, user_id=10000):
+    def token(self, user_id):
         payload = f'{user_id}{JOIN_CHAR}{self._timestamp()}'
         return self._encode(payload)
 

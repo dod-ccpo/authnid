@@ -1,7 +1,7 @@
 import json
 
 def test_validate_valid_token(app, client):
-    token = app.token_manager.token()
+    token = app.token_manager.token('1234')
     data = json.dumps({"token": token})
     res = client.post(
         "/api/v1/validate", content_type="application/json", data=data
