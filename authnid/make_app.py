@@ -85,8 +85,7 @@ def _apply_request_hooks(app):
     def before_request():
         app.db = connect_db(app.db_uri)
         cursor = make_cursor(app.db)
-        autocommit = app.config['ENV'] != 'test'
-        app.user_repo = UserRepo(app.db.cursor(), autocommit=autocommit)
+        app.user_repo = UserRepo(app.db.cursor())
 
     @app.teardown_request
     def teardown_request(exception):

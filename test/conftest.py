@@ -47,7 +47,7 @@ def client(app):
 
 @pytest.fixture
 def user_repo(database):
-    return UserRepo(database, autocommit=True)
+    return UserRepo(database)
 
 @pytest.fixture(scope="module")
 def database():

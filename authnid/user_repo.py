@@ -1,9 +1,8 @@
 from psycopg2.extensions import AsIs
 
 class UserRepo():
-    def __init__(self, cursor, autocommit=True):
+    def __init__(self, cursor):
         self.cursor = cursor
-        self.autocommit = autocommit
 
     IS_MATCH = '(%s) = %s'
 
@@ -30,8 +29,6 @@ class UserRepo():
             VALUES (%s,%s,%s,%s)
             RETURNING id;
         """, (email, dod_id, first_name, last_name))
-        if self.autocommit:
-            self.cursor.connection.commit()
         uuid = self.cursor.fetchone()[0]
         return uuid
 
