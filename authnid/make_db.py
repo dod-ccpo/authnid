@@ -16,10 +16,10 @@ def make_db(config):
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
         CREATE TABLE IF NOT EXISTS users (
             id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-            email VARCHAR(254),
-            dod_id VARCHAR(16),
-            first_name VARCHAR(128),
-            last_name VARCHAR(128)
+            email VARCHAR,
+            dod_id VARCHAR,
+            first_name VARCHAR,
+            last_name VARCHAR
         );
         CREATE INDEX IF NOT EXISTS users_email ON users (email);
         CREATE INDEX IF NOT EXISTS dod_id ON users (dod_id);
