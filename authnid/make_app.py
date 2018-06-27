@@ -6,7 +6,7 @@ from .crl import Validator
 from .token import TokenManager
 from .root import root
 from .api.v1.routes import make_api as make_api_v1
-from .make_db import make_db
+from .make_db import make_db, connect_db, make_cursor
 from .user_repo import UserRepo
 
 FLASK_ENV = os.getenv('FLASK_ENV', 'dev').lower()
@@ -35,6 +35,7 @@ def make_app(config):
     _make_crl_validator(app)
     # apply root route
     app.register_blueprint(root)
+    _apply_request_hooks(app)
     _apply_apis(app)
 
     return app
@@ -78,3 +79,17 @@ def _make_crl_validator(app):
 def _make_token_manager(app):
     app.token_manager = TokenManager(app.config.get("TOKEN_SECRET"))
 
+
+def _apply_request_hooks(app):
+    @app.before_request
+    def before_request():
+        app.db = connect_db(app.db_uri)
+        cursor = make_cursor(app.db)
+        autocommit = app.config['ENV'] != 'test'
+        app.user_repo = UserRepo(app.db.cursor(), autocommit=autocommit)
+
+    @app.teardown_request
+    def teardown_request(exception):
+        db = getattr(app, 'db', None)
+        if db is not None:
+            db.close()

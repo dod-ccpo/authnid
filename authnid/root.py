@@ -1,8 +1,6 @@
 from flask import Blueprint, request, redirect, render_template
 from flask import current_app as app
 from .utils import parse_sdn
-from .make_db import connect_db, make_cursor
-from .user_repo import UserRepo
 
 root = Blueprint('home', __name__)
 
@@ -22,19 +20,6 @@ def log_in_user():
         response.status_code = 403
 
     return response
-
-@root.before_request
-def before_request():
-    app.db = connect_db(app.db_uri)
-    cursor = make_cursor(app.db)
-    autocommit = app.config['ENV'] != 'test'
-    app.user_repo = UserRepo(app.db.cursor(), autocommit=autocommit)
-
-@root.teardown_request
-def teardown_request(exception):
-    db = getattr(app, 'db', None)
-    if db is not None:
-        db.close()
 
 def is_valid_certificate(request):
     cert = request.environ.get('HTTP_X_SSL_CLIENT_CERT')

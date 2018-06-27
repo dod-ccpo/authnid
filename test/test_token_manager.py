@@ -19,3 +19,10 @@ def test_wont_validate_expired_token(monkeypatch):
     token = token_maker.token('1234')
     monkeypatch.undo()
     assert not token_maker.validate(token)
+
+def test_can_parse_token(monkeypatch):
+    monkeypatch.setattr('authnid.token.TokenManager._timestamp', lambda s: '5678')
+    token = token_maker.token('1234')
+    parsed = token_maker.parse(token)
+    assert parsed['id'] == '1234'
+    assert parsed['timestamp'] == '5678'

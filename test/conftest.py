@@ -1,10 +1,10 @@
+import os
 import pytest
 import requests
 from authnid.make_app import make_app, make_config
 from authnid.make_db import connect_db, make_cursor
 from authnid.user_repo import UserRepo
-from .helpers import relative_dir
-import os
+from .helpers import relative_dir, DOD_SDN_INFO
 
 
 @pytest.fixture
@@ -61,3 +61,8 @@ def reset(database):
     yield
     database.execute("TRUNCATE users;")
     database.connection.commit()
+
+@pytest.fixture
+def dod_user():
+    user_info = DOD_SDN_INFO.copy()
+    return user_info

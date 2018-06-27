@@ -1,11 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from test.helpers import DOD_SDN, DOD_SDN_INFO
-
-@pytest.fixture
-def dod_user():
-    user_info = DOD_SDN_INFO.copy()
-    return user_info
+from test.helpers import DOD_SDN
 
 def test_adds_new_user_to_the_database(monkeypatch, user_repo, client, dod_user):
     magic = MagicMock(return_value='123')

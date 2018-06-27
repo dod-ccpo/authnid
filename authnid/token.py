@@ -9,17 +9,27 @@ class TokenManager():
     def __init__(self, secret):
         self._secret = secret.encode()
 
-    # stub user ID until we implement it
     def token(self, user_id):
         payload = f'{user_id}{JOIN_CHAR}{self._timestamp()}'
         return self._encode(payload)
 
     def validate(self, token):
-        parts = token.split(JOIN_CHAR)
+        parts = self._split_token(token)
         if len(parts) != 3:
             return False
         recoded = self._encode(JOIN_CHAR.join(parts[1:]))
         return self._check_timestamp(parts[2]) and hmac.compare_digest(token, recoded)
+
+    def parse(self, token):
+        parts = self._split_token(token)
+        return {
+                'hash': parts[0],
+                'id': parts[1],
+                'timestamp': parts[2]
+        }
+
+    def _split_token(self, token):
+        return token.split(JOIN_CHAR)
 
     def _check_timestamp(self, timestamp):
         return abs(self._timestamp() - int(timestamp)) <= 2
