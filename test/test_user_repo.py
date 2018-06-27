@@ -2,7 +2,6 @@ import pytest
 import re
 from .helpers import DOD_SDN_INFO
 from authnid.make_app import make_config
-from authnid.make_db import make_db
 from authnid.user_repo import UserRepo
 
 def test_add_user(user_repo):
