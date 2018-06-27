@@ -6,7 +6,7 @@ from .crl import Validator
 from .token import TokenManager
 from .root import root
 from .api.v1.routes import make_api as make_api_v1
-from .make_db import make_db, connect_db, make_cursor
+from .make_db import connect_db, make_cursor
 from .user_repo import UserRepo
 
 FLASK_ENV = os.getenv('FLASK_ENV', 'dev').lower()
@@ -27,8 +27,6 @@ def make_app(config):
     app.config.update(config_defaults)
     app.config.update(config)
 
-    # ensure schema exists
-    make_db(config)
     app.db_uri = config['DATABASE_URI']
 
     _make_token_manager(app)
