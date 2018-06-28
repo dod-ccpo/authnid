@@ -15,7 +15,7 @@ mkdir -p crl
 # find crl -type f | grep -Ev "crl/DOD(ROOT|ID|EMAIL)" | xargs rm
 
 # just include our dummy CRL for now
-cp ssl/client-certs/client-ca.pem.crl crl/
+cp ssl/client-certs/client-ca.der.crl crl/
 
 # Install pipenv
 if [ -n "$CI" ]; then
