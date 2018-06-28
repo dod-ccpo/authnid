@@ -72,9 +72,8 @@ def _make_crl_validator(app):
     app.crl_validator = Validator(
         roots=[app.config["CA_CHAIN"]], crl_locations=crl_locations
     )
-    if len(app.crl_validator.errors) > 0:
-        for e in app.crl_validator.errors:
-            app.logger.info(e)
+    for e in app.crl_validator.errors:
+        app.logger.info(e)
 
 
 def _make_token_manager(app):
