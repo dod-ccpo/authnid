@@ -7,6 +7,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 # include our dummy CRL for now
+mkdir -p crl
 cp ssl/client-certs/client-ca.der.crl crl/
 
 # Install pipenv
