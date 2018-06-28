@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# script/sync-dod-certs: update the CA bundle with DOD intermediate and root CAs
+
+echo "Resetting CA bundle..."
+rm ssl/server-certs/ca-chain.pem || true
+touch ssl/server-certs/ca-chain.pem
+
+# only for testing
+echo "Copy in testing client CA..."
+cat ssl/client-certs/client-ca.crt >> ssl/server-certs/ca-chain.pem
+
+# dod intermediate certs
+echo "Adding DoD intermediate certs"
+curl -s https://militarycac.com/maccerts/AllCerts.p7b | openssl pkcs7 -print_certs -inform der -outform pem >> ssl/server-certs/ca-chain.pem
+echo "Adding DoD root certs"
+curl -s https://militarycac.com/maccerts/RootCert2.cer | openssl x509 -inform der -outform pem >> ssl/server-certs/ca-chain.pem
+curl -s https://militarycac.com/maccerts/RootCert3.cer | openssl x509 -inform der -outform pem >> ssl/server-certs/ca-chain.pem
+curl -s https://militarycac.com/maccerts/RootCert4.cer | openssl x509 -inform der -outform pem >> ssl/server-certs/ca-chain.pem
+curl -s https://militarycac.com/maccerts/RootCert5.cer | openssl x509 -inform der -outform pem >> ssl/server-certs/ca-chain.pem

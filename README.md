@@ -22,22 +22,22 @@ The tests run with Pytest. Modify and add tests to `./tests/`.
 
 The `ssl` directory contains example certs for configuring the regular server SSL, client authentication, and the client certificates currently written to the sample PIVKey. It also contains a script, `make-certs.sh`, which can be used to write a new certificate authority and sign a CSR for the server SSL. The script writes the CSR to list multiple valid hosts (`subjectAltName`) so that the final cert can work across environments (like docker, for instance, where it's host name is "backend").
 
-### Intermediate CAs
+## DoD CA Management
 
-We are using `pyopenssl` for CRL checks. Currently, this requires that the intermediate CAs for any client CAs be in the CA chain. If you have a DDS CAC card and want to test for local development, you need to add the right intermediate CA before spinning up the server. To do this:
-
-- Try a different CAC-enabled site and pay attention the CA listed next to the cert you use in the browser certificate prompt (for instance, if you log in with an email cert and it says "CA-43" next to your cert, you need "DOD EMAIL CA-43.cer").
-- Download the corresponding intermediate cert here: https://militarycac.com/maccerts/
-- Convert the cert from DER to PEM format:
+The certificate bundle is located in `ssl/server-certs/ca-chain.pem`. Currently, it contains the testing client CA along with all the DoD root and intermediate certs. If the bundle needs to be updated, run:
 
 ```
-openssl crl -inform DER -outform PEM -in [path to the downloaded cert] -out cert-output.pem
+./script/sync-dod-certs
 ```
 
-- Then you need to append it to the CA bundle:
+This will pull down all of the DoD CAs and add them to the bundle.
+
+## DoD CRL Management
+
+Before updating the CRLs, note that the CRL list is about 50MB and the connection is slow. To refresh the CRLs, run:
 
 ```
-cat cert-output.pem >> ssl/server-certs/ca-chain.pem
+script/sync-crls
 ```
 
-- Build and start the server as outlined above. Now your intermediate cert is part of the CA chain that both NGINX and the CRL validator use.
+This will download and unpack the CRLs into a `crl` directory in the repo root. These are not track or used for development, but are necessary for production.
