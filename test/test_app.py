@@ -1,7 +1,9 @@
-# Import installed packages
-import requests
 import re
+import pytest
+import requests
 from test.helpers import is_token, relative_dir
+from authnid.make_app import make_config
+from authnid.user_repo import UserRepo
 
 
 def test_log_in_with_cac(request_client):

@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.."
 # ensure everything in the app is up to date.
 script/update
 # bring up the application stack
-script/up -d
+FLASK_ENV=test script/up -d
 
 #TODO wait for application to become responsive
 
@@ -19,5 +19,5 @@ echo "==> Running tests…"
   # pass arguments to test call. This is useful for calling a single test.
   # bin/rake test "$1"
 # else
-  docker-compose run backend-tests pytest $1
+  docker-compose run backend-tests pytest $*
 # fi

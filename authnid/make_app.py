@@ -4,7 +4,12 @@ from flask import Flask
 from configparser import ConfigParser
 from .crl import Validator
 from .token import TokenManager
+from .root import root
 from .api.v1.routes import make_api as make_api_v1
+from .make_db import connect_db, make_cursor
+from .user_repo import UserRepo
+
+FLASK_ENV = os.getenv('FLASK_ENV', 'dev').lower()
 
 config_defaults = {
     "PORT": 4567,
@@ -21,8 +26,14 @@ def make_app(config):
     app = Flask(__name__)
     app.config.update(config_defaults)
     app.config.update(config)
+
+    app.db_uri = config['DATABASE_URI']
+
     _make_token_manager(app)
     _make_crl_validator(app)
+    # apply root route
+    app.register_blueprint(root)
+    _apply_request_hooks(app)
     _apply_apis(app)
 
     return app
@@ -36,7 +47,7 @@ def make_config():
     ENV_CONFIG_FILENAME = os.path.join(
         os.path.dirname(__file__),
         '../config/',
-        '{}.ini'.format(os.getenv('FLASK_ENV', 'dev').lower())
+        '{}.ini'.format(FLASK_ENV)
     )
     config = ConfigParser()
     config.optionxform = str
@@ -65,3 +76,17 @@ def _make_crl_validator(app):
 
 def _make_token_manager(app):
     app.token_manager = TokenManager(app.config.get("TOKEN_SECRET"))
+
+
+def _apply_request_hooks(app):
+    @app.before_request
+    def before_request():
+        app.db = connect_db(app.db_uri)
+        cursor = make_cursor(app.db)
+        app.user_repo = UserRepo(app.db.cursor())
+
+    @app.teardown_request
+    def teardown_request(exception):
+        db = getattr(app, 'db', None)
+        if db is not None:
+            db.close()

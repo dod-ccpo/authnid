@@ -6,10 +6,15 @@ name = "pypi"
 [packages]
 Flask = "==1.0.2"
 pyopenssl = "*"
+"psycopg2-binary" = "*"
+alembic = "*"
+Unipath = "==1.1"
 
 [dev-packages]
 requests = "*"
 pytest = "*"
+ipython = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.6"
