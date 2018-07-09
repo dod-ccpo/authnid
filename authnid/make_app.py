@@ -73,7 +73,7 @@ def _make_crl_validator(app):
         roots=[app.config["CA_CHAIN"]], crl_locations=crl_locations
     )
     for e in app.crl_validator.errors:
-        app.logger.info(e)
+        app.logger.error(e)
 
 
 def _make_token_manager(app):
