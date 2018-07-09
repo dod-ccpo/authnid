@@ -17,5 +17,12 @@ mkdir -p crl
 # just include our dummy CRL for now
 cp ssl/client-certs/client-ca.pem.crl crl/
 
+# Install pipenv
+if [ -n "$CI" ]; then
+  pip install pipenv
+else
+  pip install -q pipenv --user
+fi
+
 script/down
 script/bootstrap
