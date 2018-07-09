@@ -4,7 +4,7 @@ import re
 from OpenSSL import crypto, SSL
 
 
-class Validator():
+class Validator:
     def __init__(self, crl_locations=[], roots=[], store=crypto.X509Store()):
         self.store = store
         self.errors = []
@@ -14,18 +14,27 @@ class Validator():
 
     def _add_crls(self, locations):
         for filename in locations:
-            with open(filename, 'rb') as crl_file:
-                crl = crypto.load_crl(crypto.FILETYPE_PEM, crl_file.read())
-                self._add_carefully('add_crl', crl)
+            with open(filename, "rb") as crl_file:
+                try:
+                    crl = crypto.load_crl(crypto.FILETYPE_ASN1, crl_file.read())
+                    self._add_carefully("add_crl", crl)
+                except crypto.Error as err:
+                    self.errors.append(
+                        "CRL could not be parsed. Filename: {}, Error: {}, args: {}".format(
+                            filename, type(err), err.args
+                        )
+                    )
 
     def _add_roots(self, roots):
         for filename in roots:
-            with open(filename, 'rb') as f:
+            with open(filename, "rb") as f:
                 pems = f.read().decode()
-                raw_cas = re.split('(?<=END CERTIFICATE-----)\n(?=-----BEGIN CERTIFICATE)', pems)
+                raw_cas = re.split(
+                    "(?<=END CERTIFICATE-----)\n(?=-----BEGIN CERTIFICATE)", pems
+                )
                 for raw_ca in raw_cas:
                     ca = crypto.load_certificate(crypto.FILETYPE_PEM, raw_ca)
-                    self._add_carefully('add_cert', ca)
+                    self._add_carefully("add_cert", ca)
 
     # in testing, it seems that openssl is maintaining a local cache of certs
     # in a hash table and throws errors if you try to add redundant certs or
@@ -39,8 +48,25 @@ class Validator():
             else:
                 raise error
 
-    PRELOADED_CRL = ([('x509 certificate routines', 'X509_STORE_add_crl', 'cert already in hash table')],)
-    PRELOADED_CERT = ([('x509 certificate routines', 'X509_STORE_add_cert', 'cert already in hash table')],)
+    PRELOADED_CRL = (
+        [
+            (
+                "x509 certificate routines",
+                "X509_STORE_add_crl",
+                "cert already in hash table",
+            )
+        ],
+    )
+    PRELOADED_CERT = (
+        [
+            (
+                "x509 certificate routines",
+                "X509_STORE_add_cert",
+                "cert already in hash table",
+            )
+        ],
+    )
+
     def _is_preloaded_error(self, error):
         return error.args == self.PRELOADED_CRL or error.args == self.PRELOADED_CERT
 
@@ -51,6 +77,5 @@ class Validator():
             context.verify_certificate()
             return True
         except crypto.X509StoreContextError as err:
-            self.errors.append(err)
+            self.errors.append("Certificate revoked or errored. Error: {}. Args: {}".format(type(err), err.args))
             return False
-

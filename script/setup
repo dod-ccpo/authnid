@@ -6,16 +6,12 @@
 set -e
 cd "$(dirname "$0")/.."
 
-rm -rf crl ALLCRLZIP.zip || true
 mkdir -p crl
 
-# wget -O ALLCRLZIP.zip --ca-certificate=./ssl/server-certs/ca-chain.pem https://crl.gds.disa.mil/getcrlzip?ALL+CRL+ZIP
-# wget http://e80941f84921e909ab16-e354358e56dcbb7455ea93938bd936fa.r78.cf5.rackcdn.com/ALLCRLZIP.zip
-# unzip -o ALLCRLZIP.zip -d crl/
-# find crl -type f | grep -Ev "crl/DOD(ROOT|ID|EMAIL)" | xargs rm
-
-# just include our dummy CRL for now
-cp ssl/client-certs/client-ca.pem.crl crl/
+if [[ $FLASK_ENV != "production" ]]; then
+  # include our dummy CRL for dev and test
+  cp ssl/client-certs/client-ca.der.crl crl/
+fi
 
 # Install pipenv
 if [ -n "$CI" ]; then

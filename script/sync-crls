@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# script/sync-crls: update the DOD CRL bundle and place it where authnid expects them
+
+rm -rf crl/ || true
+mkdir -p crl
+
+wget -O ALLCRLZIP.zip --ca-certificate=./ssl/server-certs/ca-chain.pem https://crl.gds.disa.mil/getcrlzip?ALL+CRL+ZIP
+unzip -o ALLCRLZIP.zip -d crl/
+find crl -type f | grep -Ev "crl/DOD(ROOT|ID|EMAIL)" | xargs rm
+
+if [[ $FLASK_ENV != "production" ]]; then
+  # place our test CRL there
+  cp ssl/client-certs/client-ca.der.crl crl/
+fi
+
+rm -rf ALLCRLZIP.zip
