@@ -9,8 +9,8 @@ cd "$(dirname "$0")/.."
 # bring up the application stack
 script/up -d
 
-#TODO wait for application to become responsive
-
-echo "==> Running tests…"
+printf 'waiting for server...'
+until curl --silent --output /dev/null -k https://localhost:8001; do printf '.' && sleep 1; done
+printf "\n==> Running tests...\n"
 
 FLASK_ENV=test SERVER_NAME=localhost:8001 pipenv run pytest $*

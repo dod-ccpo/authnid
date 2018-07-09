@@ -1,9 +1,10 @@
+sudo: required
 language: python
 python:
   - "3.6"
-sudo: required
 services:
   - docker
-script:
+before_script:
   - ./script/setup
+script:
   - ./script/test
