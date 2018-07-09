@@ -6,9 +6,12 @@
 set -e
 cd "$(dirname "$0")/.."
 
-# include our dummy CRL for now
 mkdir -p crl
-cp ssl/client-certs/client-ca.der.crl crl/
+
+if [[ $FLASK_ENV != "production" ]]; then
+  # include our dummy CRL for dev and test
+  cp ssl/client-certs/client-ca.der.crl crl/
+fi
 
 # Install pipenv
 if [ -n "$CI" ]; then

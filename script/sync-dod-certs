@@ -6,9 +6,11 @@ echo "Resetting CA bundle..."
 rm ssl/server-certs/ca-chain.pem || true
 touch ssl/server-certs/ca-chain.pem
 
-# only for testing
-echo "Copy in testing client CA..."
-cat ssl/client-certs/client-ca.crt >> ssl/server-certs/ca-chain.pem
+if [[ $FLASK_ENV != "production" ]]; then
+  # only for testing and development
+  echo "Copy in testing client CA..."
+  cat ssl/client-certs/client-ca.crt >> ssl/server-certs/ca-chain.pem
+fi
 
 # dod intermediate certs
 echo "Adding DoD intermediate certs"

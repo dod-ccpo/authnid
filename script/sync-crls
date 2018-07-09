@@ -9,5 +9,7 @@ wget -O ALLCRLZIP.zip --ca-certificate=./ssl/server-certs/ca-chain.pem https://c
 unzip -o ALLCRLZIP.zip -d crl/
 find crl -type f | grep -Ev "crl/DOD(ROOT|ID|EMAIL)" | xargs rm
 
-# place our test CRL there
-cp ssl/client-certs/client-ca.der.crl crl/
+if [[ $FLASK_ENV != "production" ]]; then
+  # place our test CRL there
+  cp ssl/client-certs/client-ca.der.crl crl/
+fi
