@@ -9,5 +9,5 @@ def parse_sdn(sdn):
         cn = cn_string.split("=")[-1]
         info = cn.split(".")
         return {"last_name": info[0], "first_name": info[1], "dod_id": info[-1]}
-    except IndexError:
+    except (IndexError, AttributeError):
         raise ValueError("'{}' is not a valid SDN".format(sdn))
