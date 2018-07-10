@@ -35,3 +35,12 @@ def test_constructs_login_redirect_with_uuid(monkeypatch, user_repo, client, dod
     parts = location.split('.')
     token_uuid = parts[1]
     assert uuid == token_uuid
+
+
+def test_authenticates_with_invalid_sdn(monkeypatch, app, client):
+    monkeypatch.setattr('authnid.root.is_valid_certificate', lambda r: True)
+    resp = client.get('/', environ_base={
+        'HTTP_X_SSL_CLIENT_VERIFY': 'SUCCESS',
+        'HTTP_X_SSL_CLIENT_S_DN': 'totally not a DoD SDN'
+    })
+    assert resp.status_code == 403
