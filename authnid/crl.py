@@ -5,6 +5,12 @@ from OpenSSL import crypto, SSL
 
 
 class Validator:
+
+    _PEM_RE = re.compile(
+        b"-----BEGIN CERTIFICATE-----\r?.+?\r?-----END CERTIFICATE-----\r?\n?",
+        re.DOTALL,
+    )
+
     def __init__(self, crl_locations=[], roots=[], store=crypto.X509Store()):
         self.store = store
         self.errors = []
@@ -25,20 +31,20 @@ class Validator:
                         )
                     )
 
+    def _parse_roots(self, root_str):
+        return [match.group(0) for match in self._PEM_RE.finditer(root_str)]
+
     def _add_roots(self, roots):
         for filename in roots:
             with open(filename, "rb") as f:
-                pems = f.read().decode()
-                raw_cas = re.split(
-                    "(?<=END CERTIFICATE-----)\n(?=-----BEGIN CERTIFICATE)", pems
-                )
-                for raw_ca in raw_cas:
+                for raw_ca in self._parse_roots(f.read()):
                     ca = crypto.load_certificate(crypto.FILETYPE_PEM, raw_ca)
                     self._add_carefully("add_cert", ca)
 
     # in testing, it seems that openssl is maintaining a local cache of certs
     # in a hash table and throws errors if you try to add redundant certs or
     # CRLs. For now, we catch and ignore that error with great specificity.
+
     def _add_carefully(self, method_name, obj):
         try:
             getattr(self.store, method_name)(obj)
@@ -76,6 +82,11 @@ class Validator:
         try:
             context.verify_certificate()
             return True
+
         except crypto.X509StoreContextError as err:
-            self.errors.append("Certificate revoked or errored. Error: {}. Args: {}".format(type(err), err.args))
+            self.errors.append(
+                "Certificate revoked or errored. Error: {}. Args: {}".format(
+                    type(err), err.args
+                )
+            )
             return False

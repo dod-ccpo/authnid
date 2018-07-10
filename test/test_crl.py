@@ -25,7 +25,9 @@ def test_can_build_crl_list(monkeypatch):
 def test_can_build_trusted_root_list():
     location = 'ssl/server-certs/ca-chain.pem'
     validator = Validator(roots=[location], store=MockX509Store())
-    assert len(validator.store.certs) > 0
+    with open(location) as f:
+        content = f.read()
+        assert len(validator.store.certs) == content.count('BEGIN CERT')
 
 def test_can_validate_certificate():
     validator = Validator(

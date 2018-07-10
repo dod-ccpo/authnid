@@ -11,3 +11,5 @@ def test_parse_sdn():
 def test_parse_bad_sdn():
     with pytest.raises(ValueError):
         utils.parse_sdn('this has nothing to do with anything')
+    with pytest.raises(ValueError):
+        utils.parse_sdn(None)
