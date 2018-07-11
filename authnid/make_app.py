@@ -2,7 +2,7 @@ import os
 import pathlib
 from flask import Flask
 from configparser import ConfigParser
-from .crl import Validator
+from .crl.validator import Validator
 from .token import TokenManager
 from .root import root
 from .api.v1.routes import make_api as make_api_v1
