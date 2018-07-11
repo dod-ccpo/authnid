@@ -1,6 +1,8 @@
 # Import installed packages
 import pytest
-from authnid.crl import Validator
+import re
+from authnid.crl.validator import Validator
+import authnid.crl.util as util
 
 
 class MockX509Store():
@@ -38,3 +40,32 @@ def test_can_validate_certificate():
     bad_cert = open('ssl/client-certs/bad-atat.mil.crt', 'rb').read()
     assert validator.validate(good_cert)
     assert validator.validate(bad_cert) == False
+
+
+def test_parse_disa_pki_list():
+    with open('test/fixtures/disa-pki.html') as disa:
+        disa_html = disa.read()
+        crl_list = util.crl_list_from_disa_html(disa_html)
+        href_matches = re.findall('DOD(EMAIL|ID)?CA', disa_html)
+        assert len(crl_list) > 0
+        assert len(crl_list) == len(href_matches)
+
+class MockStreamingResponse():
+    def __init__(self, content_chunks):
+        self.content_chunks = content_chunks
+
+    def iter_content(self, chunk_size=0):
+        return self.content_chunks
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+def test_write_crls(tmpdir, monkeypatch):
+    monkeypatch.setattr('requests.get', lambda u, **kwargs: MockStreamingResponse([b'it worked']))
+    crl_list = ['crl_1']
+    util.write_crls(tmpdir, crl_list)
+    assert [p.basename for p in tmpdir.listdir()] == crl_list
+    assert [p.read() for p in tmpdir.listdir()] == ['it worked']
