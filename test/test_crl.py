@@ -1,6 +1,9 @@
 # Import installed packages
 import pytest
 import re
+import os
+import shutil
+from OpenSSL import crypto, SSL
 from authnid.crl.validator import Validator
 import authnid.crl.util as util
 
@@ -21,12 +24,12 @@ class MockX509Store():
 
 def test_can_build_crl_list(monkeypatch):
     location = 'ssl/client-certs/client-ca.der.crl'
-    validator = Validator(crl_locations=[location], store=MockX509Store())
+    validator = Validator(crl_locations=[location], base_store=MockX509Store)
     assert len(validator.store.crls) == 1
 
 def test_can_build_trusted_root_list():
     location = 'ssl/server-certs/ca-chain.pem'
-    validator = Validator(roots=[location], store=MockX509Store())
+    validator = Validator(roots=[location], base_store=MockX509Store)
     with open(location) as f:
         content = f.read()
         assert len(validator.store.certs) == content.count('BEGIN CERT')
@@ -41,6 +44,18 @@ def test_can_validate_certificate():
     assert validator.validate(good_cert)
     assert validator.validate(bad_cert) == False
 
+def test_can_dynamically_update_crls(tmpdir):
+    crl_file = tmpdir.join('test.crl')
+    shutil.copyfile('ssl/client-certs/client-ca.der.crl', crl_file)
+    validator = Validator(
+            roots=['ssl/server-certs/ca-chain.pem'],
+            crl_locations=[crl_file]
+            )
+    cert = open('ssl/client-certs/atat.mil.crt', 'rb').read()
+    assert validator.validate(cert)
+    # override the original CRL with one that revokes atat.mil.crt
+    shutil.copyfile('test/fixtures/test.der.crl', crl_file)
+    assert validator.validate(cert) == False
 
 def test_parse_disa_pki_list():
     with open('test/fixtures/disa-pki.html') as disa:
