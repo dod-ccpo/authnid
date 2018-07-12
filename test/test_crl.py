@@ -61,7 +61,7 @@ def test_parse_disa_pki_list():
     with open('test/fixtures/disa-pki.html') as disa:
         disa_html = disa.read()
         crl_list = util.crl_list_from_disa_html(disa_html)
-        href_matches = re.findall('DOD(EMAIL|ID)?CA', disa_html)
+        href_matches = re.findall('DOD(ROOT|EMAIL|ID)?CA', disa_html)
         assert len(crl_list) > 0
         assert len(crl_list) == len(href_matches)
 
