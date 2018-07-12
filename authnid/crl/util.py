@@ -14,7 +14,7 @@ def fetch_disa():
 
 class DISAParser(HTMLParser):
     crl_list = []
-    _CRL_MATCH = re.compile("DOD(EMAIL|ID)?CA")
+    _CRL_MATCH = re.compile("DOD(ROOT|EMAIL|ID)?CA")
 
     def handle_starttag(self, tag, attrs):
         if tag == "a":
