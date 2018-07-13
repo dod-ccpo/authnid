@@ -78,9 +78,9 @@ class MockStreamingResponse():
     def __exit__(self, *args):
         pass
 
-def test_write_crls(tmpdir, monkeypatch):
+def test_write_crl(tmpdir, monkeypatch):
     monkeypatch.setattr('requests.get', lambda u, **kwargs: MockStreamingResponse([b'it worked']))
-    crl_list = ['crl_1']
-    util.write_crls(tmpdir, crl_list)
-    assert [p.basename for p in tmpdir.listdir()] == crl_list
+    crl = 'crl_1'
+    util.write_crl(tmpdir, crl)
+    assert [p.basename for p in tmpdir.listdir()] == [crl]
     assert [p.read() for p in tmpdir.listdir()] == ['it worked']

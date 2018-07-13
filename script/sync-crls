@@ -2,10 +2,11 @@
 
 # script/sync-crls: update the DOD CRLs and place them where authnid expects them
 
-rm -rf crl/ || true
+mkdir -p crl-tmp
+pipenv run python ./authnid/crl/util.py crl-tmp
 mkdir -p crl
-echo "Updating local CRLs..."
-pipenv run python ./authnid/crl/util.py crl
+rsync -rq crl-tmp/. crl/.
+rm -rf crl-tmp
 
 if [[ $FLASK_ENV != "production" ]]; then
   # place our test CRL there
