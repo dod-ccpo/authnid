@@ -59,13 +59,14 @@ if __name__ == "__main__":
     import datetime
     import logging
 
-    def configured_logger():
-        logging.basicConfig(
-            level=logging.INFO, format="[%(asctime)s]:%(levelname)s: %(message)s"
-        )
-        return logging.getLogger()
-
-    logger = configured_logger()
+    logging.basicConfig(
+        level=logging.INFO, format="[%(asctime)s]:%(levelname)s: %(message)s"
+    )
+    logger = logging.getLogger()
     logger.info("Updating CRLs")
-    refresh_crls(sys.argv[1], logger=logger)
+    try:
+        refresh_crls(sys.argv[1], logger=logger)
+    except Exception as err:
+        logger.exception("Fatal error encountered, stopping")
+        sys.exit(1)
     logger.info("Finished updating CRLs")

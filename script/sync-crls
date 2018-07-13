@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # script/sync-crls: update the DOD CRLs and place them where authnid expects them
+set -e
 
 mkdir -p crl-tmp
 pipenv run python ./authnid/crl/util.py crl-tmp
