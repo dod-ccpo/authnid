@@ -2,7 +2,20 @@
 
 [![Build Status](https://travis-ci.org/dod-ccpo/authnid.svg?branch=master)](https://travis-ci.org/dod-ccpo/authnid)
 
-## Back end local development
+## Installation
+
+### Cloning
+This project contains git submodules. Here is an example clone command that will
+automatically initialize and update those modules:
+
+    git clone --recurse-submodules git@github.com:dod-ccpo/atst.git
+
+If you have an existing clone that does not yet contain the submodules, you can
+set them up with the following command:
+
+    git submodule update --init --recursive
+
+### Back end local development setup
 
 To build, run `script/setup`.  `script/server` starts the stack with Docker Compose:
 
@@ -12,8 +25,8 @@ The `docker-compose.override.yml` file for local development has a host volume w
 
 To test the back end run:
 
-```bash
-script/test
+```
+./script/test
 ```
 
 The tests run with Pytest. Modify and add tests to `./tests/`.
