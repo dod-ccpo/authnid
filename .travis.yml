@@ -2,6 +2,14 @@ sudo: required
 language: python
 python:
   - "3.6"
+git:
+  submodules: false
+
+before_install:
+  # Use sed to replace the SSH URL with the public HTTP URL
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  # Manually initialize submodules
+  - git submodule update --init --recursive
 services:
   - docker
 before_script:
