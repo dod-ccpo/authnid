@@ -6,6 +6,7 @@ root = Blueprint('home', __name__)
 
 @root.route('/')
 def log_in_user():
+    app.logger.info(request.environ)
     if request.environ.get('HTTP_X_SSL_CLIENT_VERIFY') == 'SUCCESS' and is_valid_certificate(request):
         sdn = request.environ.get('HTTP_X_SSL_CLIENT_S_DN')
         try:

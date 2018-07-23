@@ -10,6 +10,7 @@ pyopenssl = "*"
 "psycopg2-binary" = "*"
 alembic = "*"
 Unipath = "==1.1"
+uwsgi = "*"
 
 [dev-packages]
 pytest = "*"
